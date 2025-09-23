@@ -3,22 +3,25 @@ package be.kdg.sa.restaurantservice.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.jmolecules.ddd.annotation.AggregateRoot;
+import org.jmolecules.ddd.annotation.Entity;
 
 import java.util.UUID;
 
-@Getter
-@ToString
+@Entity
 public class Dish {
-    public UUID dishId;
-    public String name;
-    public DishState state;
-    public Boolean price;
-    public String description;
+    private final DishId id;
+    private final String name;
+    private final String description;
+    private final boolean price;
+    private DishState state;
 
-    public Dish(String description, DishState state, Boolean price, String name) {
-        this.description = description;
-        this.state = state;
-        this.price = price;
+    public Dish(String name, String description, boolean price) {
+        this.id = DishId.create();
         this.name = name;
+        this.description = description;
+        this.price = price;
+        this.state = DishState.AVAILABLE;
     }
 }
+

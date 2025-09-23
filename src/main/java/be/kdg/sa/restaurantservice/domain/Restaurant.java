@@ -3,31 +3,31 @@ package be.kdg.sa.restaurantservice.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.jmolecules.ddd.annotation.AggregateRoot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
-@ToString
+@AggregateRoot
 public class Restaurant {
-    public UUID restaurantId;
-    public Address address;
-    public String email;
-    public Owner owner;
-    public RestaurantType restaurantType;
-    public List<Dish> menu;
-    public String logo;
+    private final RestaurantId id;
+    private final OwnerId ownerId;
 
-    //TODO: openingsuren
+    private final Address address;
+    private final RestaurantType type;
+    private final String email;
+    private final String logo;
+    private final List<Dish> menu;
 
-
-    public Restaurant(RestaurantType restaurantType, Owner owner, List<Dish> menu, String logo, String email, Address address) {
-        this.restaurantType = restaurantType;
-        this.owner = owner;
-        this.menu = menu;
-        this.logo = logo;
-        this.email = email;
+    public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String email, String logo) {
+        this.id = RestaurantId.create();
+        this.ownerId = ownerId;
         this.address = address;
-        this.restaurantId = UUID.randomUUID();
+        this.type = type;
+        this.email = email;
+        this.logo = logo;
+        this.menu = new ArrayList<>();
     }
+
 }

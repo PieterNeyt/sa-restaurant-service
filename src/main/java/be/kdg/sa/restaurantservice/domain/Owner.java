@@ -1,31 +1,21 @@
 package be.kdg.sa.restaurantservice.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import org.jmolecules.ddd.annotation.AggregateRoot;
 
-import java.util.Date;
-import java.util.UUID;
-@Getter
-@ToString
+
+@AggregateRoot
 public class Owner {
-    public UUID ownerId;
-    public String firstName;
-    public String lastName;
-    public String email;
-    public String phoneNumber;
-    public Address address;
-    public Date birthDate;
-    public Restaurant restaurant;
+    private final OwnerId id;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final Address address;
 
-    public Owner(Address address,Restaurant restaurant, String phoneNumber, UUID ownerId, String lastName, String firstName, String email, Date birthDate) {
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.ownerId = ownerId;
-        this.lastName = lastName;
+    public Owner(String firstName, String lastName, String email, Address address) {
+        this.id = OwnerId.create();
         this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
-        this.birthDate = birthDate;
-        this.restaurant = restaurant;
+        this.address = address;
     }
 }
