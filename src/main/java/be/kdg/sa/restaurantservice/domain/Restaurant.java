@@ -1,4 +1,4 @@
-package be.kdg.sa.backend.domain;
+package be.kdg.sa.restaurantservice.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 @ToString
 public class Restaurant {
     public UUID restaurantId;

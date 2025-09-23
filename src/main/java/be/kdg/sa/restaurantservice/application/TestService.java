@@ -1,7 +1,7 @@
-package be.kdg.sa.backend.application;
+package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.backend.domain.Test;
-import be.kdg.sa.backend.domain.TestRepository;
+import be.kdg.sa.restaurantservice.domain.Test;
+import be.kdg.sa.restaurantservice.domain.TestRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;

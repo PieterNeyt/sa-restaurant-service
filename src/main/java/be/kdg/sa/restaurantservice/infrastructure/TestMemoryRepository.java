@@ -1,6 +1,7 @@
-package be.kdg.sa.backend.infrastructure;
+package be.kdg.sa.restaurantservice.infrastructure;
 
-import be.kdg.sa.backend.domain.Test;
+import be.kdg.sa.restaurantservice.domain.Test;
+import be.kdg.sa.restaurantservice.domain.TestRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public class TestMemoryRepository implements be.kdg.sa.backend.domain.TestRepository {
+public class TestMemoryRepository implements TestRepository {
     @Override
     public Collection<Test> getAllTests() {
         List<Test> testList = new ArrayList<>();

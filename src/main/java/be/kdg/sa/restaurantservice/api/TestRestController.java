@@ -1,7 +1,7 @@
-package be.kdg.sa.backend.api;
+package be.kdg.sa.restaurantservice.api;
 
-import be.kdg.sa.backend.application.TestService;
-import be.kdg.sa.backend.domain.Test;
+import be.kdg.sa.restaurantservice.application.TestService;
+import be.kdg.sa.restaurantservice.domain.Test;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
