@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public record RestaurantDto(UUID id, UUID ownerId, UUID addressId, RestaurantType restaurantType,String name, String email, String logo, List<Dish> dishes) {
+public record RestaurantDto(UUID id, UUID ownerId, UUID addressId, RestaurantType restaurantType,String name, String email, String logo, List<Dish> dishes, boolean isOpen) {
     public static RestaurantDto from(final Restaurant restaurant) {
         return new RestaurantDto(restaurant.getId().id(),restaurant.getOwnerId().id(),
-                restaurant.getAddressId().id(), restaurant.getType(), restaurant.getName(), restaurant.getEmail(), restaurant.getLogo(), restaurant.getDishes());
+                restaurant.getAddressId().id(), restaurant.getType(), restaurant.getName(), restaurant.getEmail(), restaurant.getLogo(), restaurant.getDishes(),restaurant.isOpen());
     }
     public record DishDto(UUID id, UUID RestaurantId, String name, String description, BigDecimal price,
                           DishState dishState) {

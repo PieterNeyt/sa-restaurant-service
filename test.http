@@ -1,9 +1,11 @@
+@ownerId = 550e8400-e29b-41d4-a716-446655440000
+
 ### 1. Restaurant toevoegen
 POST http://localhost:8080/api/restaurant/addRestaurant
 Content-Type: application/json
 
 {
-  "ownerId": "550e8400-e29b-41d4-a716-446655440000",
+  "ownerId": "{{ownerId}}",
   "addressId": "b12d5c1a-3d1f-4b8f-9f9a-11a2b3c4d5e6",
   "restaurantType": "BUFFET",
   "name": "La Bella Vita",
@@ -34,3 +36,7 @@ PUT http://localhost:8080/api/restaurant/changeStateDish/{{dishId}}
 Content-Type: application/json
 
 "PUBLISHED"
+
+
+### 4. Restaurant openen of sluiten
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/changeOpenState?ownerId={{ownerId}}

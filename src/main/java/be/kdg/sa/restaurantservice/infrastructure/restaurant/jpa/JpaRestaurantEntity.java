@@ -36,6 +36,8 @@ public class JpaRestaurantEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private RestaurantType type;
+    @Column(nullable = false)
+    private boolean isOpen;
 
     @OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL ,fetch = FetchType.LAZY, orphanRemoval = true)
     private List<JpaDishEntity> dishes;
@@ -50,11 +52,19 @@ public class JpaRestaurantEntity {
         this.type = type;
         this.email = email;
         this.addresId=addresId;
+        this.isOpen = false;
     }
 
     public static JpaRestaurantEntity fromDomain(Restaurant restaurant) {
-        JpaRestaurantEntity jpaRestaurantEntity = new JpaRestaurantEntity(restaurant.getId().id(), restaurant.getOwnerId().id(),restaurant.getAddressId().id(),
-                restaurant.getName(), restaurant.getEmail(), restaurant.getLogo(), restaurant.getType());
+        JpaRestaurantEntity jpaRestaurantEntity = new JpaRestaurantEntity(
+                restaurant.getId().id(),
+                restaurant.getOwnerId().id(),
+                restaurant.getAddressId().id(),
+                restaurant.getName(),
+                restaurant.getEmail(),
+                restaurant.getLogo(),
+                restaurant.getType());
+        jpaRestaurantEntity.isOpen = restaurant.isOpen();
 
         List<JpaDishEntity> jpaDishEntity = restaurant.getDishes().stream()
                 .map(JpaDishEntity::fromDomain)
@@ -65,7 +75,17 @@ public class JpaRestaurantEntity {
         return jpaRestaurantEntity;
     }
     public Restaurant toDomain() {
-        Restaurant restaurant = new Restaurant(new RestaurantId(id),new OwnerId(ownerId),new AddressId(addresId),type,name,email,logo);
+        Restaurant restaurant = new Restaurant(
+                new RestaurantId(id),
+                new OwnerId(ownerId),
+                new AddressId(addresId),
+                type,
+                name,
+                email,
+                logo);
+        if (isOpen) {
+            restaurant.changeOpenState(ownerId);
+        }
         dishes.forEach(dish -> restaurant.addDish(dish.getId(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice())
         );
         return restaurant;

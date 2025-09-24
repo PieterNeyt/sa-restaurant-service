@@ -25,6 +25,8 @@ public class Restaurant {
     private final String logo;
     private final List<Dish> dishes = new ArrayList<>();
 
+    private boolean isOpen;
+
     public Restaurant(OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
         this.name = name;
         this.id = RestaurantId.create();
@@ -33,6 +35,7 @@ public class Restaurant {
         this.type = type;
         this.email = email;
         this.logo = logo;
+        this.isOpen = false;
     }
 
     public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
@@ -68,5 +71,12 @@ public class Restaurant {
         return dishes.stream()
                 .filter(d -> d.getState() == DishState.PUBLISHED)
                 .count() >= 10;
+    }
+
+    public void changeOpenState(UUID requesterId) {
+        if (!ownerId.id().equals(requesterId)) {
+            throw new IllegalStateException("Enkel de eigenaar kan de openingsstatus weizigen");
+        }
+        this.isOpen = !isOpen;
     }
 }

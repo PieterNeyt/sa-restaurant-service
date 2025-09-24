@@ -55,4 +55,10 @@ public class RestaurantService {
         restaurant.updateDish(dishId,state);
         restaurantRepository.save(restaurant);
     }
+    public void updateOpenState(UUID restaurantId, UUID requesterId ) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
+        restaurant.changeOpenState(requesterId);
+        restaurantRepository.save(restaurant);
+    }
+
 }

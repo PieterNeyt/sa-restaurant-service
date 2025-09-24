@@ -58,5 +58,16 @@ public class RestaurantController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{id}/changeOpenState")
+    public ResponseEntity<Void> changeOpenState(
+            @PathVariable("id") UUID restaurantId,
+            @RequestParam("ownerId") UUID ownerId
+    ) {
+        restaurantService.updateOpenState(restaurantId, ownerId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
 
 }
