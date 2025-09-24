@@ -1,7 +1,10 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
+import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import be.kdg.sa.restaurantservice.domain.Owner.Owner;
+import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,6 +21,8 @@ public class JpaRestaurantEntity {
     private UUID id;
     @Column(nullable = false)
     private UUID ownerId;
+    @Column(nullable = false)
+    private UUID addresId;
 
 
     @Column(nullable = false)
@@ -35,17 +40,18 @@ public class JpaRestaurantEntity {
 
     protected JpaRestaurantEntity() {}
 
-    public JpaRestaurantEntity(UUID id, UUID ownerId, String name,String email, String logo, RestaurantType type) {
+    public JpaRestaurantEntity(UUID id, UUID ownerId,UUID addresId, String name,String email, String logo, RestaurantType type) {
         this.id = id;
         this.ownerId = ownerId;
         this.name = name;
         this.logo = logo;
         this.type = type;
         this.email = email;
+        this.addresId=addresId;
     }
 
     public static JpaRestaurantEntity fromDomain(Restaurant restaurant) {
-        JpaRestaurantEntity jpaRestaurantEntity = new JpaRestaurantEntity(restaurant.getId().id(), restaurant.getOwnerId().id(),
+        JpaRestaurantEntity jpaRestaurantEntity = new JpaRestaurantEntity(restaurant.getId().id(), restaurant.getOwnerId().id(),restaurant.getAddressId().id(),
                 restaurant.getName(), restaurant.getEmail(), restaurant.getLogo(), restaurant.getType());
 
         List<JpaDishEntity> jpaDishEntity = restaurant.getDishes().stream()
@@ -55,6 +61,12 @@ public class JpaRestaurantEntity {
         jpaRestaurantEntity.setDishes(jpaDishEntity);
 
         return jpaRestaurantEntity;
+    }
+    public Restaurant toDomain() {
+        Restaurant restaurant = new Restaurant(new RestaurantId(id),new OwnerId(ownerId),new AddressId(addresId),type,name,email,logo);
+        dishes.forEach(dish -> restaurant.addDish(dish.getId(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice())
+        );
+        return restaurant;
     }
 
     public void setDishes(List<JpaDishEntity> dishes) {

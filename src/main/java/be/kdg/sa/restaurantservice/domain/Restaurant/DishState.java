@@ -1,7 +1,7 @@
 package be.kdg.sa.restaurantservice.domain.Restaurant;
 
 public enum DishState {
-    AVAILABLE,
+    PUBLISHED,
     TEMP_NOT_AVAILABLE,
     NOT_PUBLISHED,
 }

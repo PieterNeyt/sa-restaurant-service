@@ -10,3 +10,14 @@ Content-Type: application/json
   "logo": "https://example.com/logo.png",
   "dishes": []
 }
+
+###
+POST http://localhost:8080/api/restaurant/addDish
+Content-Type: application/json
+
+{
+  "RestaurantId": "2ad5a3b9-eb6b-4d24-81c6-d3353d56e2a1",
+  "name": "Spaghetti Bolognese",
+  "description": "Classic Italian pasta with meat sauce",
+  "price": 12.50
+}

@@ -7,6 +7,9 @@ import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantRe
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 public class DbRestaurantRepository implements RestaurantRepository {
     private final JpaRestaurantRepository jpaRestaurantRepository;
@@ -20,6 +23,11 @@ public class DbRestaurantRepository implements RestaurantRepository {
         JpaRestaurantEntity jpaRestaurant =JpaRestaurantEntity.fromDomain(restaurant);
         this.jpaRestaurantRepository.saveAndFlush(jpaRestaurant);
         System.out.println("jeej");
+    }
+
+    @Override
+    public Optional<Restaurant> findById(UUID id) {
+        return this.jpaRestaurantRepository.findById(id).map(JpaRestaurantEntity::toDomain);
     }
 
 }

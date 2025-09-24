@@ -5,6 +5,7 @@ import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 
@@ -19,7 +20,7 @@ public class JpaDishEntity {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
-    private boolean price;
+    private BigDecimal price;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DishState state;
@@ -30,7 +31,7 @@ public class JpaDishEntity {
 
     protected JpaDishEntity() {}
 
-    public JpaDishEntity(UUID id, String name, String description, boolean price, DishState state) {
+    public JpaDishEntity(UUID id, String name, String description, BigDecimal price, DishState state) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -43,7 +44,7 @@ public class JpaDishEntity {
                 dish.getId().id(),
                 dish.getName(),
                 dish.getDescription(),
-                dish.isPrice(),
+                dish.getPrice(),
                 dish.getState()
         );
     }
