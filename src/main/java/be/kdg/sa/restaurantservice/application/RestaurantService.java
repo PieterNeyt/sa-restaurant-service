@@ -20,11 +20,19 @@ public class RestaurantService {
     }
 
     public Restaurant createRestaurant(CreateRestaurantCommand restaurantCommand) {
+        //check of owner al een restaurant heeft anders throw exception
+        if (restaurantRepository.CheckIfOwnerAlreadyOwnsRestaurant(restaurantCommand.ownerId()))
+            throw new IllegalStateException("Owner already owns restaurant");
+
+        //maak nieuw restaurant aan
         Restaurant restaurant = new Restaurant(
                 new OwnerId(restaurantCommand.ownerId()),
                 new AddressId(restaurantCommand.addressId()),restaurantCommand.restaurantType(),restaurantCommand.name(),
                 restaurantCommand.email(),restaurantCommand.logo());
+
+        //slaag deze op
         restaurantRepository.save(restaurant);
+
         return restaurant;
     }
 

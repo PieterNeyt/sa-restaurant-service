@@ -17,8 +17,10 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
 
+
     @PostMapping("/addRestaurant")
     public ResponseEntity<RestaurantDto> addRestaurant(@RequestBody RestaurantDto restaurantDto) {
+        //zet het om naar command om minder parameters in methode te hebben
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 restaurantDto.ownerId(),
                 restaurantDto.addressId(),
@@ -28,6 +30,7 @@ public class RestaurantController {
                 restaurantDto.logo(),
                 restaurantDto.dishes()
         );
+
         Restaurant restaurant = restaurantService.createRestaurant(command);
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }

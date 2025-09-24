@@ -10,4 +10,6 @@ public interface RestaurantRepository {
     void save(Restaurant restaurant);
 
     Optional<Restaurant> findById(UUID id);
+
+    boolean CheckIfOwnerAlreadyOwnsRestaurant(UUID ownerId);
 }

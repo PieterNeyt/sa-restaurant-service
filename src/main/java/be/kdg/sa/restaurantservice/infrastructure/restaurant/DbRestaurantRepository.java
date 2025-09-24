@@ -21,13 +21,21 @@ public class DbRestaurantRepository implements RestaurantRepository {
     @Override
     public void save(Restaurant restaurant) {
         JpaRestaurantEntity jpaRestaurant =JpaRestaurantEntity.fromDomain(restaurant);
-        this.jpaRestaurantRepository.saveAndFlush(jpaRestaurant);
-        System.out.println("jeej");
+        JpaRestaurantEntity savedEntity = this.jpaRestaurantRepository.save(jpaRestaurant);
+        //checken dat het wel degelijk gesaved is
+        if (savedEntity.getId() == null) {
+            throw new RuntimeException("Failed to save restaurant");
+        }
     }
 
     @Override
     public Optional<Restaurant> findById(UUID id) {
         return this.jpaRestaurantRepository.findById(id).map(JpaRestaurantEntity::toDomain);
+    }
+
+    @Override
+    public boolean CheckIfOwnerAlreadyOwnsRestaurant(UUID ownerId) {
+        return jpaRestaurantRepository.findByOwnerId(ownerId).isPresent();
     }
 
 }
