@@ -1,14 +1,10 @@
-package be.kdg.sa.restaurantservice.domain;
+package be.kdg.sa.restaurantservice.domain.Restaurant;
 
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
 
-import java.util.UUID;
-
 @Entity
+@Getter
 public class Dish {
     private final DishId id;
     private final String name;

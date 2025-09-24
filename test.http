@@ -1,0 +1,12 @@
+POST http://localhost:8080/api/restaurant/addRestaurant
+Content-Type: application/json
+
+{
+  "ownerId": "550e8400-e29b-41d4-a716-446655440000",
+  "addressId": "b12d5c1a-3d1f-4b8f-9f9a-11a2b3c4d5e6",
+  "restaurantType": "BUFFET",
+  "name": "La Bella Vita",
+  "email": "info@labellavita.com",
+  "logo": "https://example.com/logo.png",
+  "dishes": []
+}

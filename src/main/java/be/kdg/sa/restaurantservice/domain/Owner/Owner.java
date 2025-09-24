@@ -1,5 +1,7 @@
-package be.kdg.sa.restaurantservice.domain;
+package be.kdg.sa.restaurantservice.domain.Owner;
 
+import be.kdg.sa.restaurantservice.domain.Address.Address;
+import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 
 
@@ -9,13 +11,13 @@ public class Owner {
     private final String firstName;
     private final String lastName;
     private final String email;
-    private final Address address;
+    private final AddressId addressId;
 
-    public Owner(String firstName, String lastName, String email, Address address) {
+    public Owner(String firstName, String lastName, String email, AddressId addressId) {
         this.id = OwnerId.create();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.address = address;
+        this.addressId = addressId;
     }
 }

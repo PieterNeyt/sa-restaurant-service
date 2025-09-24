@@ -1,16 +1,16 @@
-package be.kdg.sa.restaurantservice.domain;
+package be.kdg.sa.restaurantservice.domain.Address;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.jmolecules.ddd.annotation.AggregateRoot;
+import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 
-import java.util.UUID;
-
-@AggregateRoot
+@Entity
 @Getter
 @ToString
 public class Address {
+
     private final AddressId addressId;
     private final String street;
     private final String streetNumber;
