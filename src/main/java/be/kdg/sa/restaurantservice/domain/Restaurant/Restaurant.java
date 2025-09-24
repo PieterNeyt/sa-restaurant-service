@@ -23,7 +23,7 @@ public class Restaurant {
     private final String name;
     private final String email;
     private final String logo;
-    private final List<Dish> dishes =  new ArrayList<>();
+    private final List<Dish> dishes = new ArrayList<>();
 
     public Restaurant(OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
         this.name = name;
@@ -34,7 +34,8 @@ public class Restaurant {
         this.email = email;
         this.logo = logo;
     }
-    public Restaurant(RestaurantId id,OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
+
+    public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
         this.name = name;
         this.id = id;
         this.ownerId = ownerId;
@@ -50,6 +51,22 @@ public class Restaurant {
 
 
     public void addDish(UUID id, String description, String name, DishState state, BigDecimal price) {
-        dishes.add(new Dish(new DishId(id),state,name,description,price));
+        dishes.add(new Dish(new DishId(id), state, name, description, price));
+    }
+
+    public void updateDish(UUID dishId, DishState state) {
+        //get Dish
+        Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst().orElseThrow();
+
+        if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
+            throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
+
+        dish.setState(state);
+    }
+
+    private boolean hasMaximumPublishedDishes() {
+        return dishes.stream()
+                .filter(d -> d.getState() == DishState.PUBLISHED)
+                .count() >= 10;
     }
 }

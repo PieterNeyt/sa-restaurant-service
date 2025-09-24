@@ -1,15 +1,17 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.api.RestaurantDto;
 import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
+import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import be.kdg.sa.restaurantservice.api.RestaurantDto.*;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand.*;
+
+import java.util.UUID;
+
 @Service
 @Transactional
 public class RestaurantService {
@@ -38,11 +40,19 @@ public class RestaurantService {
 
     public Dish createDish(CreateDishCommand command) {
         Dish dish = new Dish(command.name(),command.description(),command.price());
+
         Restaurant restaurant =  restaurantRepository.findById(command.restaurantId())
                 .orElseThrow();
+
         restaurant.addDish(dish.getId().id(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice());
 
         restaurantRepository.save(restaurant);
         return dish;
+    }
+
+    public void updateStateDish(UUID dishId, DishState state) {
+        Restaurant restaurant = restaurantRepository.findById(dishId).orElseThrow();
+        restaurant.updateDish(dishId,state);
+        restaurantRepository.save(restaurant);
     }
 }

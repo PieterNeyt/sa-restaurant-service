@@ -2,6 +2,8 @@ package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -9,4 +11,10 @@ import java.util.UUID;
 
 public interface JpaRestaurantRepository extends JpaRepository<JpaRestaurantEntity, UUID> {
     Optional<JpaRestaurantEntity> findByOwnerId(UUID ownerId);
+
+    @Query("SELECT d FROM JpaRestaurantEntity r JOIN r.dishes d WHERE d.id = :dishId")
+    Optional<JpaDishEntity> findDishById(@Param("dishId") UUID dishId);
+
+    @Query("SELECT r FROM JpaRestaurantEntity r JOIN r.dishes d WHERE d.id = :dishId")
+    Optional<JpaRestaurantEntity> findRestaurantIdByDishId(@Param("dishId") UUID dishId);
 }

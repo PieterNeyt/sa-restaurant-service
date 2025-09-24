@@ -1,6 +1,7 @@
 package be.kdg.sa.restaurantservice.domain.Restaurant;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.jmolecules.ddd.annotation.Entity;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ public class Dish {
     private final String name;
     private final String description;
     private final BigDecimal price;
+    @Setter
     private DishState state;
 
     public Dish(String name, String description, BigDecimal price) {
@@ -28,5 +30,6 @@ public class Dish {
         this.price = price;
         this.state = DishState.PUBLISHED;
     }
+
 }
 

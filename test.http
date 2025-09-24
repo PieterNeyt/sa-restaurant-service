@@ -16,8 +16,15 @@ POST http://localhost:8080/api/restaurant/addDish
 Content-Type: application/json
 
 {
-  "RestaurantId": "2ad5a3b9-eb6b-4d24-81c6-d3353d56e2a1",
+  "RestaurantId": "e8a69c66-6c64-481c-85d8-865f1c6ecebb",
   "name": "Spaghetti Bolognese",
   "description": "Classic Italian pasta with meat sauce",
   "price": 12.50
 }
+
+###
+@id =c2403f2e-d7f6-483d-b285-e4277a495b36
+PUT http://localhost:8080/api/restaurant/changeStateDish/{{id}}
+Content-Type: application/json
+
+"PUBLISHED"

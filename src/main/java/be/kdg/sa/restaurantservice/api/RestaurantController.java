@@ -3,11 +3,14 @@ package be.kdg.sa.restaurantservice.api;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
+import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.*;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/restaurant")
@@ -46,6 +49,13 @@ public class RestaurantController {
         );
         Dish dish = restaurantService.createDish(command);
         return ResponseEntity.ok(DishDto.from(dish,dishDto.RestaurantId()));
+    }
+
+    @PutMapping("/changeStateDish/{id}")
+    public ResponseEntity<Void> changeStateDish(@PathVariable("id") UUID id,
+                                                         @RequestBody DishState state) {
+        restaurantService.updateStateDish(id,state);
+        return ResponseEntity.ok().build();
     }
 
 

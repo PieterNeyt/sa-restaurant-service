@@ -1,6 +1,7 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
 import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
+import be.kdg.sa.restaurantservice.domain.Restaurant.DishId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -51,5 +52,9 @@ public class JpaDishEntity {
 
     public void setRestaurant(JpaRestaurantEntity jpaRestaurantEntity) {
         this.restaurant = jpaRestaurantEntity;
+    }
+
+    public Dish toDomain() {
+        return new Dish(new DishId(id),state,name,description,price);
     }
 }
