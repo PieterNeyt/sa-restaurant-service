@@ -9,7 +9,9 @@ import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -69,9 +71,7 @@ public class JpaRestaurantEntity {
         return restaurant;
     }
 
-    public void setDishes(List<JpaDishEntity> dishes) {
-        this.dishes = dishes;
-        this.dishes.forEach(dish -> dish.setRestaurant(this));
-    }
+    public void setDishes(List<JpaDishEntity> dishes) { this.dishes = dishes; this.dishes.forEach(dish -> dish.setRestaurant(this)); }
+
 
 }

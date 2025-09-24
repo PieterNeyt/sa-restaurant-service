@@ -45,7 +45,7 @@ public class RestaurantController {
                 dishDto.name(),
                 dishDto.description(),
                 dishDto.price(),
-                dishDto.dishState()
+                DishState.NOT_PUBLISHED
         );
         Dish dish = restaurantService.createDish(command);
         return ResponseEntity.ok(DishDto.from(dish,dishDto.RestaurantId()));

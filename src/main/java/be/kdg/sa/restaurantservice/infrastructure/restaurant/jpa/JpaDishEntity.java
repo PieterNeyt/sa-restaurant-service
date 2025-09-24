@@ -57,4 +57,5 @@ public class JpaDishEntity {
     public Dish toDomain() {
         return new Dish(new DishId(id),state,name,description,price);
     }
+
 }

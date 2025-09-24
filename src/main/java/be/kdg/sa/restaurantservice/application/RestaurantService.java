@@ -51,7 +51,7 @@ public class RestaurantService {
     }
 
     public void updateStateDish(UUID dishId, DishState state) {
-        Restaurant restaurant = restaurantRepository.findById(dishId).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId).orElseThrow();
         restaurant.updateDish(dishId,state);
         restaurantRepository.save(restaurant);
     }

@@ -13,8 +13,6 @@ public interface RestaurantRepository {
 
     boolean CheckIfOwnerAlreadyOwnsRestaurant(UUID ownerId);
 
-    Optional<Dish> findDishById(UUID id);
-
     Optional<Restaurant> findRestaurantFromDishId(UUID id);
 
 }

@@ -1,3 +1,4 @@
+### 1. Restaurant toevoegen
 POST http://localhost:8080/api/restaurant/addRestaurant
 Content-Type: application/json
 
@@ -11,20 +12,25 @@ Content-Type: application/json
   "dishes": []
 }
 
-###
+> {% client.global.set("restaurantId", response.body.id); %}
+
+
+### 2. Dish toevoegen (restaurantId automatisch ingevuld)
 POST http://localhost:8080/api/restaurant/addDish
 Content-Type: application/json
 
 {
-  "RestaurantId": "e8a69c66-6c64-481c-85d8-865f1c6ecebb",
+  "RestaurantId": "{{restaurantId}}",
   "name": "Spaghetti Bolognese",
   "description": "Classic Italian pasta with meat sauce",
   "price": 12.50
 }
 
-###
-@id =c2403f2e-d7f6-483d-b285-e4277a495b36
-PUT http://localhost:8080/api/restaurant/changeStateDish/{{id}}
+> {% client.global.set("dishId", response.body.id); %}
+
+
+### 3. Dish status veranderen (dishId automatisch gebruikt)
+PUT http://localhost:8080/api/restaurant/changeStateDish/{{dishId}}
 Content-Type: application/json
 
 "PUBLISHED"

@@ -21,14 +21,14 @@ public class Dish {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.state = DishState.PUBLISHED;
+        this.state = DishState.NOT_PUBLISHED;
     }
     public Dish(DishId id,DishState state, String name, String description, BigDecimal price) {
-        this.id = DishId.create();
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.state = DishState.PUBLISHED;
+        this.state = state;
     }
 
 }
