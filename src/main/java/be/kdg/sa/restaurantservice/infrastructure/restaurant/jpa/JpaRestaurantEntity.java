@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import be.kdg.sa.restaurantservice.domain.Owner.Owner;
 import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
+import be.kdg.sa.restaurantservice.domain.Restaurant.PriceCategory;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantType;
@@ -39,6 +40,11 @@ public class JpaRestaurantEntity {
     @Column(nullable = false)
     private boolean isOpen;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PriceCategory priceCategory;
+
+
     @OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL ,fetch = FetchType.LAZY, orphanRemoval = true)
     private List<JpaDishEntity> dishes;
 
@@ -65,6 +71,7 @@ public class JpaRestaurantEntity {
                 restaurant.getLogo(),
                 restaurant.getType());
         jpaRestaurantEntity.isOpen = restaurant.isOpen();
+        jpaRestaurantEntity.priceCategory = restaurant.getPriceCategory();
 
         List<JpaDishEntity> jpaDishEntity = restaurant.getDishes().stream()
                 .map(JpaDishEntity::fromDomain)
@@ -82,10 +89,10 @@ public class JpaRestaurantEntity {
                 type,
                 name,
                 email,
-                logo);
-        if (isOpen) {
-            restaurant.changeOpenState(ownerId);
-        }
+                logo,
+                 isOpen,
+                priceCategory);
+
         dishes.forEach(dish -> restaurant.addDish(dish.getId(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice())
         );
         return restaurant;

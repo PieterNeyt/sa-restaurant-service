@@ -26,6 +26,7 @@ public class Restaurant {
     private final List<Dish> dishes = new ArrayList<>();
 
     private boolean isOpen;
+    private PriceCategory priceCategory;
 
     public Restaurant(OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
         this.name = name;
@@ -36,9 +37,10 @@ public class Restaurant {
         this.email = email;
         this.logo = logo;
         this.isOpen = false;
+        this.priceCategory = PriceCategory.CHEAP; // default cheap
     }
 
-    public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
+    public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo, boolean isOpen, PriceCategory priceCategory) {
         this.name = name;
         this.id = id;
         this.ownerId = ownerId;
@@ -46,6 +48,8 @@ public class Restaurant {
         this.type = type;
         this.email = email;
         this.logo = logo;
+        this.isOpen = isOpen;
+        this.priceCategory = priceCategory;
     }
 
     public List<Dish> getDishes() {
@@ -55,6 +59,7 @@ public class Restaurant {
 
     public void addDish(UUID id, String description, String name, DishState state, BigDecimal price) {
         dishes.add(new Dish(new DishId(id), state, name, description, price));
+        updatePriceCategory();
     }
 
     public void updateDish(UUID dishId, DishState state) {
@@ -65,6 +70,7 @@ public class Restaurant {
             throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
 
         dish.setState(state);
+        updatePriceCategory();
     }
 
     private boolean hasMaximumPublishedDishes() {
@@ -79,4 +85,28 @@ public class Restaurant {
         }
         this.isOpen = !isOpen;
     }
+    public void updatePriceCategory() {
+
+        if (dishes.isEmpty()) {
+            this.priceCategory = PriceCategory.CHEAP; // als geen gerechten default cheap
+            return;
+        }
+
+        double sum = 0;
+        for (Dish dish : dishes) {
+                sum += dish.getPrice().doubleValue();
+        }
+        double avgPrice = sum / dishes.size();
+
+        if (avgPrice < 10) {
+            this.priceCategory = PriceCategory.CHEAP;
+        } else if (avgPrice <= 30) {
+            this.priceCategory = PriceCategory.NORMAL;
+        } else if (avgPrice <= 60) {
+            this.priceCategory = PriceCategory.EXPENSIVE;
+        } else {
+            this.priceCategory = PriceCategory.PREMIUM;
+        }
+    }
+
 }
