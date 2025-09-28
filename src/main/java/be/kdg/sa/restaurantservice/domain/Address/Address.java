@@ -2,9 +2,7 @@ package be.kdg.sa.restaurantservice.domain.Address;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
-import org.jmolecules.ddd.annotation.Identity;
 
 @Entity
 @Getter

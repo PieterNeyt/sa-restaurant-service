@@ -1,14 +1,17 @@
 package be.kdg.sa.restaurantservice.api;
 
+import be.kdg.sa.restaurantservice.api.RestaurantDto.DishDto;
+import be.kdg.sa.restaurantservice.api.RestaurantDto.RestaurantChangesOverviewDto;
+import be.kdg.sa.restaurantservice.api.RestaurantDto.ScheduleDishChangeDto;
+import be.kdg.sa.restaurantservice.application.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
+import be.kdg.sa.restaurantservice.application.ScheduledDishChangeService;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
 import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import be.kdg.sa.restaurantservice.api.RestaurantDto.*;
-import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand.*;
 
 import java.util.UUID;
 
@@ -16,14 +19,19 @@ import java.util.UUID;
 @RequestMapping("/api/restaurant")
 public class RestaurantController {
     private final RestaurantService restaurantService;
-    public RestaurantController(RestaurantService restaurantService) {
+    private final ScheduledDishChangeService scheduledDishChangeService;
+
+    public RestaurantController(RestaurantService restaurantService, ScheduledDishChangeService scheduledDishChangeService) {
         this.restaurantService = restaurantService;
+        this.scheduledDishChangeService = scheduledDishChangeService;
     }
+
+
 
 
     @PostMapping("/addRestaurant")
     public ResponseEntity<RestaurantDto> addRestaurant(@RequestBody RestaurantDto restaurantDto) {
-        //zet het om naar command om minder parameters in methode te hebben
+
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 restaurantDto.ownerId(),
                 restaurantDto.addressId(),
@@ -66,6 +74,31 @@ public class RestaurantController {
         restaurantService.updateOpenState(restaurantId, ownerId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/scheduleDishChange")
+    public ResponseEntity<Void> scheduleDishChange(@RequestBody ScheduleDishChangeDto request) {
+        scheduledDishChangeService.scheduleDishChange(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/applyAllScheduledChangesForRestaurant")
+    public ResponseEntity<Void> applyAllScheduledChanges(
+            @RequestParam UUID ownerId,
+            @RequestParam UUID restaurantId) {
+        scheduledDishChangeService.applyAllPendingChanges(ownerId, restaurantId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{restaurantId}/changesOverview")
+    public ResponseEntity<RestaurantChangesOverviewDto> getRestaurantChangesOverview(
+            @PathVariable UUID restaurantId,
+            @RequestParam UUID ownerId
+    ) {
+        var overview = restaurantService.getOverviewForRestaurantAndOwner(restaurantId, ownerId);
+        return ResponseEntity.ok(overview);
+    }
+
+
 
 
 

@@ -5,6 +5,7 @@ import be.kdg.sa.restaurantservice.domain.Restaurant.DishId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,19 +17,30 @@ import java.util.UUID;
 public class JpaDishEntity {
     @Id
     private UUID id;
+    @Setter
     @Column(nullable = false)
     private String name;
+    @Setter
     @Column(nullable = false)
     private String description;
+    @Setter
     @Column(nullable = false)
     private BigDecimal price;
+    @Setter
     @Enumerated(EnumType.STRING)
+
+
     @Column(nullable = false)
     private DishState state;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id")
     private JpaRestaurantEntity restaurant;
+
+
+
+
 
     protected JpaDishEntity() {}
 
@@ -40,7 +52,7 @@ public class JpaDishEntity {
         this.state = state;
     }
 
-    static JpaDishEntity fromDomain(Dish dish) {
+    public static JpaDishEntity fromDomain(Dish dish) {
         return new JpaDishEntity(
                 dish.getId().id(),
                 dish.getName(),
@@ -48,10 +60,6 @@ public class JpaDishEntity {
                 dish.getPrice(),
                 dish.getState()
         );
-    }
-
-    public void setRestaurant(JpaRestaurantEntity jpaRestaurantEntity) {
-        this.restaurant = jpaRestaurantEntity;
     }
 
     public Dish toDomain() {
