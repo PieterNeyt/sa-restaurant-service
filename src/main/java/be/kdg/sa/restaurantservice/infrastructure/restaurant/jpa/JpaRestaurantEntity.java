@@ -1,7 +1,6 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
 import be.kdg.sa.restaurantservice.domain.Address.AddressId;
-import be.kdg.sa.restaurantservice.domain.Owner.Owner;
 import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.PriceCategory;
 import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
@@ -10,9 +9,7 @@ import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -81,6 +78,7 @@ public class JpaRestaurantEntity {
 
         return jpaRestaurantEntity;
     }
+
     public Restaurant toDomain() {
         Restaurant restaurant = new Restaurant(
                 new RestaurantId(id),

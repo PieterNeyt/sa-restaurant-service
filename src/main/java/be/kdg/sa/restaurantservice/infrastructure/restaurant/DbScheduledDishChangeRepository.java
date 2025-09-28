@@ -36,13 +36,7 @@ public class DbScheduledDishChangeRepository implements ScheduledDishChangeRepos
         jpaRepo.deleteById(change.getId().id());
     }
 
-    @Override
-    public List<ScheduledDishChange> findPendingChanges(LocalDateTime now) {
-        return jpaRepo.findByScheduledTimeAfter(now)
-                .stream()
-                .map(JpaScheduledDishChangeEntity::toDomain)
-                .toList();
-    }
+
 
     @Override
     public List<ScheduledDishChange> findDueChangesByRestaurantAndOwner( UUID restaurantId, UUID ownerId) {

@@ -1,6 +1,5 @@
 package be.kdg.sa.restaurantservice.domain.Restaurant;
 
-import be.kdg.sa.restaurantservice.domain.Address.Address;
 import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
 import lombok.Getter;
@@ -81,7 +80,7 @@ public class Restaurant {
 
     public void changeOpenState(UUID requesterId) {
         if (!ownerId.id().equals(requesterId)) {
-            throw new IllegalStateException("Enkel de eigenaar kan de openingsstatus weizigen");
+            throw new IllegalStateException("Enkel de eigenaar kan de openingsstatus wijzigen");
         }
         this.isOpen = !isOpen;
     }

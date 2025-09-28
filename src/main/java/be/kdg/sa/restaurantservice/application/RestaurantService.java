@@ -6,7 +6,6 @@ import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.Restaurant.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand.*;
 
 import java.util.UUID;
 
@@ -60,7 +59,7 @@ public class RestaurantService {
         restaurant.changeOpenState(requesterId);
         restaurantRepository.save(restaurant);
     }
-    @Transactional(readOnly = true)
+
     public RestaurantDto.RestaurantChangesOverviewDto getOverviewForRestaurantAndOwner(UUID restaurantId, UUID ownerId) {
         var restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
@@ -69,7 +68,7 @@ public class RestaurantService {
             throw new SecurityException("Not allowed to view changes for this restaurant");
         }
 
-        // pending changes ophalen (best nog methode findPendingChangesByRestaurantAndOwner voorzien)
+        // pending changes ophalen
         var pendingChanges = scheduledRepo.findDueChangesByRestaurantAndOwner(restaurantId, ownerId);
 
         return RestaurantDto.RestaurantChangesOverviewDto.from(restaurant, pendingChanges);

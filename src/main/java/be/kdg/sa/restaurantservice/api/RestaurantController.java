@@ -1,13 +1,17 @@
 package be.kdg.sa.restaurantservice.api;
 
+import be.kdg.sa.restaurantservice.api.RestaurantDto.DishDto;
+import be.kdg.sa.restaurantservice.api.RestaurantDto.RestaurantChangesOverviewDto;
+import be.kdg.sa.restaurantservice.api.RestaurantDto.ScheduleDishChangeDto;
 import be.kdg.sa.restaurantservice.application.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
 import be.kdg.sa.restaurantservice.application.ScheduledDishChangeService;
-import be.kdg.sa.restaurantservice.domain.Restaurant.*;
+import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
+import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
+import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import be.kdg.sa.restaurantservice.api.RestaurantDto.*;
 
 import java.util.UUID;
 
@@ -27,7 +31,7 @@ public class RestaurantController {
 
     @PostMapping("/addRestaurant")
     public ResponseEntity<RestaurantDto> addRestaurant(@RequestBody RestaurantDto restaurantDto) {
-        //zet het om naar command om minder parameters in methode te hebben
+
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 restaurantDto.ownerId(),
                 restaurantDto.addressId(),

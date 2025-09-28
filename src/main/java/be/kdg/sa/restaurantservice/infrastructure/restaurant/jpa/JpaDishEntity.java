@@ -17,18 +17,23 @@ import java.util.UUID;
 public class JpaDishEntity {
     @Id
     private UUID id;
+    @Setter
     @Column(nullable = false)
     private String name;
+    @Setter
     @Column(nullable = false)
     private String description;
+    @Setter
     @Column(nullable = false)
     private BigDecimal price;
+    @Setter
     @Enumerated(EnumType.STRING)
 
 
     @Column(nullable = false)
     private DishState state;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id")
     private JpaRestaurantEntity restaurant;
@@ -57,27 +62,8 @@ public class JpaDishEntity {
         );
     }
 
-    public void setRestaurant(JpaRestaurantEntity jpaRestaurantEntity) {
-        this.restaurant = jpaRestaurantEntity;
-    }
-
-    public void setState(DishState state) {
-        this.state = state;
-    }
-
     public Dish toDomain() {
         return new Dish(new DishId(id),state,name,description,price);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description=description;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }
