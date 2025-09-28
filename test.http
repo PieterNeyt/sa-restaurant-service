@@ -30,6 +30,19 @@ Content-Type: application/json
 
 > {% client.global.set("dishId", response.body.id); %}
 
+### 2.1 tweede Dish toevoegen (restaurantId automatisch ingevuld)
+POST http://localhost:8080/api/restaurant/addDish
+Content-Type: application/json
+
+{
+  "RestaurantId": "{{restaurantId}}",
+  "name": "frietjes",
+  "description": "met stoofvlees",
+  "price": 20
+}
+
+> {% client.global.set("dishId2", response.body.id); %}
+
 
 ### 3. Dish status veranderen (dishId automatisch gebruikt)
 PUT http://localhost:8080/api/restaurant/changeStateDish/{{dishId}}
@@ -48,9 +61,28 @@ Content-Type: application/json
 
 {
   "dishId": "{{dishId}}",
-  "scheduledTime": "2025-09-28T15:42:01.222",
+  "scheduledTime": "2025-09-29T15:42:01.222",
   "targetState": "NOT_PUBLISHED",
-  "targetName": "Spaghetti Bolognese",
+  "targetName": "spaghetti Bolognese",
   "targetDescription": "Verse pasta met huisgemaakte saus",
-  "targetPrice": 14.50
+  "targetPrice": 15
 }
+
+### 5.1 Schedule een tweede dish change (bv. naar NOT_PUBLISHED over 2 minuten)
+POST http://localhost:8080/api/restaurant/scheduleDishChange
+Content-Type: application/json
+
+{
+  "dishId": "{{dishId2}}",
+  "scheduledTime": "2025-09-29T15:42:01.222",
+  "targetState": "NOT_PUBLISHED",
+  "targetName": "frietjes",
+  "targetDescription": "zonder stoofvlees",
+  "targetPrice": 15
+}
+
+
+### 6. Voer alle geschedulde dish changes uit
+
+POST http://localhost:8080/api/restaurant/applyAllScheduledChangesForRestaurant?ownerId={{ownerId}}&restaurantId={{restaurantId}}
+Content-Type: application/json

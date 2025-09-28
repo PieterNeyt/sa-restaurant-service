@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class DbScheduledDishChangeRepository implements ScheduledDishChangeRepository {
@@ -33,6 +34,22 @@ public class DbScheduledDishChangeRepository implements ScheduledDishChangeRepos
     @Override
     public void delete(ScheduledDishChange change) {
         jpaRepo.deleteById(change.getId().id());
+    }
+
+    @Override
+    public List<ScheduledDishChange> findPendingChanges(LocalDateTime now) {
+        return jpaRepo.findByScheduledTimeAfter(now)
+                .stream()
+                .map(JpaScheduledDishChangeEntity::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<ScheduledDishChange> findDueChangesByRestaurantAndOwner( UUID restaurantId, UUID ownerId) {
+        return jpaRepo.findDueChangesForRestaurantAndOwner( restaurantId, ownerId)
+                .stream()
+                .map(JpaScheduledDishChangeEntity::toDomain)
+                .toList();
     }
 
 

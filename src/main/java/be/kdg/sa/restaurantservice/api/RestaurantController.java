@@ -78,6 +78,14 @@ public class RestaurantController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/applyAllScheduledChangesForRestaurant")
+    public ResponseEntity<Void> applyAllScheduledChanges(
+            @RequestParam UUID ownerId,
+            @RequestParam UUID restaurantId) {
+        scheduledDishChangeService.applyAllPendingChanges(ownerId, restaurantId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 

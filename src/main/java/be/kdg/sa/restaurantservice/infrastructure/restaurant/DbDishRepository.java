@@ -25,7 +25,7 @@ public class DbDishRepository implements DishRepository {
         Optional<JpaDishEntity> existing = jpa.findById(id);
 
         if (existing.isPresent()) {
-            // update enkel de velden die veranderen (hier: state)
+            // update de velden die veranderen
             JpaDishEntity entity = existing.get();
             entity.setState(dish.getState());
             entity.setName(dish.getName());
@@ -33,7 +33,6 @@ public class DbDishRepository implements DishRepository {
             entity.setPrice(dish.getPrice());
             jpa.save(entity);
         } else {
-            // nieuwe aanmaak
             jpa.save(JpaDishEntity.fromDomain(dish));
         }
     }
