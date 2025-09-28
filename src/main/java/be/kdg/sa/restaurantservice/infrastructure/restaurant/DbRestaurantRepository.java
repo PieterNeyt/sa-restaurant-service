@@ -44,4 +44,5 @@ public class DbRestaurantRepository implements RestaurantRepository {
     public Optional<Restaurant> findRestaurantFromDishId(UUID id) {
         return this.jpaRestaurantRepository.findRestaurantIdByDishId(id).map(JpaRestaurantEntity::toDomain);
     }
+
 }

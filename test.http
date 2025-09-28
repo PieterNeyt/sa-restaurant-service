@@ -40,3 +40,14 @@ Content-Type: application/json
 
 ### 4. Restaurant openen of sluiten
 PUT http://localhost:8080/api/restaurant/{{restaurantId}}/changeOpenState?ownerId={{ownerId}}
+
+
+### 5. Schedule een dish change (bv. naar NOT_PUBLISHED over 2 minuten)
+POST http://localhost:8080/api/restaurant/scheduleDishChange
+Content-Type: application/json
+
+{
+  "dishId": "{{dishId}}",
+  "scheduledTime": "2025-09-28T00:06:01.222",
+  "targetState": "NOT_PUBLISHED"
+}

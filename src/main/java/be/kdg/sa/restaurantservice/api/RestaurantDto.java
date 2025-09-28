@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice.api;
 import be.kdg.sa.restaurantservice.domain.Restaurant.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,4 +34,7 @@ public record RestaurantDto(UUID id, UUID ownerId, UUID addressId, RestaurantTyp
                     dish.getState());
         }
     }
+
+    public record ScheduleDishChangeRequest(UUID dishId, LocalDateTime scheduledTime, DishState targetState) {}
+
 }
