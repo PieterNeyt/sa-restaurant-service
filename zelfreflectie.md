@@ -1,7 +1,49 @@
-# Zelfreflectie Pieter
+# Zelfreflectie document - voorbeeld
 
-De eerste week had ik nog wat moeite om uit de vakantiemodus te komen, waardoor ik niet zo veel gedaan heb. Al snel merkte ik echter dat ik hierdoor achterliep bij de grote hoeveelheid werk van de verschillende projecten, en ben ik toch in gang geschoten.
+## V1
 
-Ik merk dat ik het nog steeds een beetje lastig vind om volledig vertrouwd te raken met de DDD-structuur. Maar ik vermoed dat dit zichzelf zal oplossen naarmate ik er meer vertrouwd mee geraak.
+### 🔗 Pre coaching
 
-Het meeste moeite had ik met **US8: Als eigenaar wil ik wijzigingen kunnen inplannen zodat ze samen op een gekozen tijdstip live gaan**. Hiervoor heb ik een cronjob gebruikt. Na vele uren YouTube, documentatie en AI om hulp vragen bij rare errors, ben ik er uiteindelijk toch in geslaagd.
+**Geschatte Progress (in procent): 25%**
+
+---
+
+#### Status
+*Waar sta je globaal? Wat loopt goed en minder goed? Hoe verloopt de samenwerking? Wie heeft geholpen en wie kan de applicatie implementeren / delen? Passen kunnen er bekijken op het niveau team?*
+
+De eerste week hebben we ons vooral bezig gehouden met het opzetten van alle 3 services, hun repositories en het domeinmodel.
+Na de DDD-sessie en de persistency-sessie hebben we ons domein gerefactord
+
+We hebben **US1-2-3-4-5-6-7-8-9-10-12-39** al afgewerkt (dit is bijna heel de restaurant service behalve US40 wat gaat over integratietests schrijven)
+
+We gaan nu beginnen aan de orderservice. We moeten juist nog eens kijken hoe we hier juist aan gaan beginnen.
+
+
+
+---
+
+#### Stories
+*Geef aan welke stories zijn opgepakt en afgerond.*
+
+- [US1-2-3-4-5-6-7-8-9-10-12-39] → afgerond 
+
+
+---
+
+#### Quality
+*Acties / refactoring die nog gepland staan om de kwaliteit van je project te verhogen. Maak hiervoor issues aan: issue summary, toelichting (issue nummer), toelichting.*
+
+* we moeten  nog eens samenzitten om te zien of we de ddd-princiepes met de aggregate root wel goed hebben toegepast bij het bewerken/updaten of toevoegen van een entity
+---
+
+#### Vragen
+*Eventuele vragen voor je coach*
+
+- / Voorlopig niet
+
+---
+
+### Post coaching
+
+#### Feedback
+*Zijn de velden na gesprek? Wie zorgde voor verschil qua plaatsing t.o.v. het single responsibility principe en moeten het project overlopen om dit op orde te krijgen. Er zit business logica in de Controller die daar niet thuis hoort vs. prijsberekening. We moeten erover waken dat we dit scheiden, want we lopen een beetje achter.*
