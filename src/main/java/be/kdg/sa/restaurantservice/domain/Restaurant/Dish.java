@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice.domain.Restaurant;
 import lombok.Getter;
 import lombok.Setter;
 import org.jmolecules.ddd.annotation.Entity;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 
@@ -27,6 +28,15 @@ public class Dish {
         this.state = DishState.NOT_PUBLISHED;
     }
     public Dish(DishId id,DishState state, String name, String description, BigDecimal price) {
+        Assert.notNull(id, "DishId must not be null");
+        Assert.notNull(state, "DishState must not be null");
+        Assert.notNull(price, "Price must not be null");
+
+        Assert.hasText(name, "Name must not be blank");
+        Assert.hasText(description, "Description must not be blank");
+
+        Assert.isTrue(price.compareTo(BigDecimal.ZERO) > 0, "Price must be greater than zero");
+
         this.id = id;
         this.name = name;
         this.description = description;

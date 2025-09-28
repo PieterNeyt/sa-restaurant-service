@@ -4,6 +4,7 @@ import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,6 +29,15 @@ public class Restaurant {
     private PriceCategory priceCategory;
 
     public Restaurant(OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
+        Assert.notNull(ownerId, "owner id must not be null");
+        Assert.notNull(addressId, "address id must not be null");
+
+        Assert.hasText(name, "name must not be blank");
+        Assert.hasText(email, "email must not be blank");
+        Assert.hasText(logo, "logo must not be blank");
+
+        Assert.notNull(type, "restaurant type must not be null");
+
         this.name = name;
         this.id = RestaurantId.create();
         this.ownerId = ownerId;
@@ -39,16 +49,31 @@ public class Restaurant {
         this.priceCategory = PriceCategory.CHEAP; // default cheap
     }
 
-    public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo, boolean isOpen, PriceCategory priceCategory) {
-        this.name = name;
+    public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId,
+                      RestaurantType type,
+                      String name, String email, String logo,
+                      boolean isOpen,
+                      PriceCategory priceCategory) {
+        Assert.notNull(id, "id must not be null");
+        Assert.notNull(ownerId, "owner id must not be null");
+        Assert.notNull(addressId, "address id must not be null");
+
+        Assert.hasText(name, "name must not be blank");
+        Assert.hasText(email, "email must not be blank");
+        Assert.hasText(logo, "logo must not be blank");
+
+        Assert.notNull(type, "restaurant type must not be null");
+        Assert.notNull(priceCategory, "priceCategory must not be null");
+
         this.id = id;
         this.ownerId = ownerId;
         this.addressId = addressId;
-        this.type = type;
+        this.name = name;
         this.email = email;
         this.logo = logo;
-        this.isOpen = isOpen;
+        this.type = type;
         this.priceCategory = priceCategory;
+        this.isOpen = isOpen;
     }
 
     public List<Dish> getDishes() {
