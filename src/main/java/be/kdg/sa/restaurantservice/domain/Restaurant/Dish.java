@@ -10,9 +10,12 @@ import java.math.BigDecimal;
 @Getter
 public class Dish {
     private final DishId id;
-    private final String name;
-    private final String description;
-    private final BigDecimal price;
+    @Setter
+    private String name;
+    @Setter
+    private String description;
+    @Setter
+    private BigDecimal price;
     @Setter
     private DishState state;
 
@@ -29,6 +32,23 @@ public class Dish {
         this.description = description;
         this.price = price;
         this.state = state;
+    }
+    public void changeNameTo(String newName) {
+        if (newName == null || newName.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        this.name = newName;
+    }
+
+    public void changeDescriptionTo(String newDescription) {
+        this.description = newDescription;
+    }
+
+    public void changePriceTo(BigDecimal newPrice) {
+        if (newPrice == null || newPrice.signum() < 0) {
+            throw new IllegalArgumentException("Prijs moet groter zijn dan 0");
+        }
+        this.price = newPrice;
     }
 
 }

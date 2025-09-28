@@ -27,7 +27,10 @@ public class DbDishRepository implements DishRepository {
         if (existing.isPresent()) {
             // update enkel de velden die veranderen (hier: state)
             JpaDishEntity entity = existing.get();
-            entity.setState(dish.getState()); // vereist setState op JpaDishEntity
+            entity.setState(dish.getState());
+            entity.setName(dish.getName());
+            entity.setDescription(dish.getDescription());
+            entity.setPrice(dish.getPrice());
             jpa.save(entity);
         } else {
             // nieuwe aanmaak

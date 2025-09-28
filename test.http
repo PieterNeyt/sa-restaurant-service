@@ -48,6 +48,9 @@ Content-Type: application/json
 
 {
   "dishId": "{{dishId}}",
-  "scheduledTime": "2025-09-28T14:45:01.222",
-  "targetState": "NOT_PUBLISHED"
+  "scheduledTime": "2025-09-28T15:42:01.222",
+  "targetState": "NOT_PUBLISHED",
+  "targetName": "Spaghetti Bolognese",
+  "targetDescription": "Verse pasta met huisgemaakte saus",
+  "targetPrice": 14.50
 }

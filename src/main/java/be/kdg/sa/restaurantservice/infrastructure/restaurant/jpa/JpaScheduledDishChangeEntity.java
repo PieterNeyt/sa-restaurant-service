@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,14 +28,28 @@ public class JpaScheduledDishChangeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DishState targetState;
+    @Column(nullable = false)
+    private String targetName;
+    @Column(nullable = false)
+    private String targetDescription;
+    @Column(nullable = false)
+    private BigDecimal targetPrice;
 
     protected JpaScheduledDishChangeEntity() {}
 
-    public JpaScheduledDishChangeEntity(UUID id, UUID dishId, LocalDateTime scheduledTime, DishState targetState) {
+    public JpaScheduledDishChangeEntity(UUID id, UUID dishId,
+                                        LocalDateTime scheduledTime,
+                                        DishState targetState,
+                                        String targetName,
+                                        String targetDescription,
+                                        BigDecimal targetPrice) {
         this.id = id;
         this.dishId = dishId;
         this.scheduledTime = scheduledTime;
         this.targetState = targetState;
+        this.targetName = targetName;
+        this.targetDescription = targetDescription;
+        this.targetPrice = targetPrice;
     }
 
     public static JpaScheduledDishChangeEntity fromDomain(ScheduledDishChange change) {
@@ -42,7 +57,10 @@ public class JpaScheduledDishChangeEntity {
                 change.getId().id(),
                 change.getDishId().id(),
                 change.getScheduledTime(),
-                change.getTargetState()
+                change.getTargetState(),
+                change.getTargetName(),
+                change.getTargetDescription(),
+                change.getTargetPrice()
         );
     }
 
@@ -51,8 +69,10 @@ public class JpaScheduledDishChangeEntity {
                 new ScheduledDishChangeId(id),
                 new DishId(dishId),
                 scheduledTime,
-                targetState
+                targetState,
+                targetName,
+                targetDescription,
+                targetPrice
         );
     }
-
 }

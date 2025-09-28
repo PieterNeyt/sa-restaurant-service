@@ -45,6 +45,14 @@ public record RestaurantDto(UUID id,
         }
     }
 
-    public record ScheduleDishChangeRequest(UUID dishId, LocalDateTime scheduledTime, DishState targetState) {}
+    public record ScheduleDishChangeRequest(
+            UUID dishId,
+            LocalDateTime scheduledTime,
+            DishState targetState,
+            String targetName,
+            String targetDescription,
+            BigDecimal targetPrice
+    ) {}
+
 
 }

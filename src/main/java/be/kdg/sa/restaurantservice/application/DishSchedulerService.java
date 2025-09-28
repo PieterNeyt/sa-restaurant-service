@@ -34,6 +34,10 @@ public class DishSchedulerService {
         for (ScheduledDishChange change : dueChanges) {
             dishRepo.findById(change.getDishId()).ifPresentOrElse(dish -> {
                 dish.setState(change.getTargetState());
+                dish.changeNameTo(change.getTargetName());
+                dish.changeDescriptionTo(change.getTargetDescription());
+                dish.changePriceTo(change.getTargetPrice());
+
                 dishRepo.save(dish);
                 scheduledRepo.delete(change);
 

@@ -18,8 +18,12 @@ public class ScheduledDishChangeService {
         ScheduledDishChange change = new ScheduledDishChange(
                 new DishId(request.dishId()),
                 request.scheduledTime(),
-                request.targetState()
+                request.targetState(),
+                request.targetName(),
+                request.targetDescription(),
+                request.targetPrice()
         );
         scheduledRepo.save(change);
     }
+
 }
