@@ -1,7 +1,9 @@
 package be.kdg.sa.restaurantservice.api;
 
+import be.kdg.sa.restaurantservice.application.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
+import be.kdg.sa.restaurantservice.application.ScheduledDishChangeService;
 import be.kdg.sa.restaurantservice.domain.Restaurant.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +16,11 @@ import java.util.UUID;
 @RequestMapping("/api/restaurant")
 public class RestaurantController {
     private final RestaurantService restaurantService;
-    private final ScheduledDishChangeRepository scheduledDishChangeRepository;
+    private final ScheduledDishChangeService scheduledDishChangeService;
 
-    public RestaurantController(RestaurantService restaurantService, ScheduledDishChangeRepository scheduledDishChangeRepository) {
+    public RestaurantController(RestaurantService restaurantService, ScheduledDishChangeService scheduledDishChangeService) {
         this.restaurantService = restaurantService;
-        this.scheduledDishChangeRepository = scheduledDishChangeRepository;
+        this.scheduledDishChangeService = scheduledDishChangeService;
     }
 
 
@@ -72,14 +74,10 @@ public class RestaurantController {
 
     @PostMapping("/scheduleDishChange")
     public ResponseEntity<Void> scheduleDishChange(@RequestBody ScheduleDishChangeRequest request) {
-        ScheduledDishChange change = new ScheduledDishChange(
-                new DishId(request.dishId()),
-                request.scheduledTime(),
-                request.targetState()
-        );
-        scheduledDishChangeRepository.save(change);
+        scheduledDishChangeService.scheduleDishChange(request);
         return ResponseEntity.ok().build();
     }
+
 
 
 
