@@ -8,7 +8,6 @@ import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChangeReposito
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ public class ScheduledDishChangeService {
         this.dishRepo = dishRepo;
     }
 
-    public void scheduleDishChange(RestaurantDto.ScheduleDishChangeRequest request) {
+    public void scheduleDishChange(RestaurantDto.ScheduleDishChangeDto request) {
         ScheduledDishChange change = new ScheduledDishChange(
                 new DishId(request.dishId()),
                 request.scheduledTime(),
@@ -53,6 +52,8 @@ public class ScheduledDishChangeService {
             });
         }
     }
+
+
 
 
 

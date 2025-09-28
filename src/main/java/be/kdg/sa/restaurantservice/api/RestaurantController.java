@@ -8,7 +8,6 @@ import be.kdg.sa.restaurantservice.domain.Restaurant.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.*;
-import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand.*;
 
 import java.util.UUID;
 
@@ -73,7 +72,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/scheduleDishChange")
-    public ResponseEntity<Void> scheduleDishChange(@RequestBody ScheduleDishChangeRequest request) {
+    public ResponseEntity<Void> scheduleDishChange(@RequestBody ScheduleDishChangeDto request) {
         scheduledDishChangeService.scheduleDishChange(request);
         return ResponseEntity.ok().build();
     }
@@ -85,6 +84,16 @@ public class RestaurantController {
         scheduledDishChangeService.applyAllPendingChanges(ownerId, restaurantId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{restaurantId}/changesOverview")
+    public ResponseEntity<RestaurantChangesOverviewDto> getRestaurantChangesOverview(
+            @PathVariable UUID restaurantId,
+            @RequestParam UUID ownerId
+    ) {
+        var overview = restaurantService.getOverviewForRestaurantAndOwner(restaurantId, ownerId);
+        return ResponseEntity.ok(overview);
+    }
+
 
 
 

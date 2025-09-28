@@ -86,3 +86,9 @@ Content-Type: application/json
 
 POST http://localhost:8080/api/restaurant/applyAllScheduledChangesForRestaurant?ownerId={{ownerId}}&restaurantId={{restaurantId}}
 Content-Type: application/json
+
+### 7. Haal overzicht op van alle gerechten en geplande weizegingen van een restaurant als owner
+
+GET http://localhost:8080/api/restaurant/{{restaurantId}}/changesOverview?ownerId={{ownerId}}
+Accept: application/json
+

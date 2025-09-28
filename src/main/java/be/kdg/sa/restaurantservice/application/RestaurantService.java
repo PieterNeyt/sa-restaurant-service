@@ -1,11 +1,9 @@
 package be.kdg.sa.restaurantservice.application;
 
+import be.kdg.sa.restaurantservice.api.RestaurantDto;
 import be.kdg.sa.restaurantservice.domain.Address.AddressId;
 import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
-import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
-import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantRepository;
+import be.kdg.sa.restaurantservice.domain.Restaurant.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand.*;
@@ -16,9 +14,11 @@ import java.util.UUID;
 @Transactional
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
+    private final ScheduledDishChangeRepository scheduledRepo;
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository, ScheduledDishChangeRepository scheduledRepo) {
         this.restaurantRepository = restaurantRepository;
+        this.scheduledRepo = scheduledRepo;
     }
 
     public Restaurant createRestaurant(CreateRestaurantCommand restaurantCommand) {
@@ -59,6 +59,20 @@ public class RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
         restaurant.changeOpenState(requesterId);
         restaurantRepository.save(restaurant);
+    }
+    @Transactional(readOnly = true)
+    public RestaurantDto.RestaurantChangesOverviewDto getOverviewForRestaurantAndOwner(UUID restaurantId, UUID ownerId) {
+        var restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+
+        if (!restaurant.getOwnerId().id().equals(ownerId)) {
+            throw new SecurityException("Not allowed to view changes for this restaurant");
+        }
+
+        // pending changes ophalen (best nog methode findPendingChangesByRestaurantAndOwner voorzien)
+        var pendingChanges = scheduledRepo.findDueChangesByRestaurantAndOwner(restaurantId, ownerId);
+
+        return RestaurantDto.RestaurantChangesOverviewDto.from(restaurant, pendingChanges);
     }
 
 }

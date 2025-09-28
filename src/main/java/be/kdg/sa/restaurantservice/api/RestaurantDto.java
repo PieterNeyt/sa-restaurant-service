@@ -45,14 +45,50 @@ public record RestaurantDto(UUID id,
         }
     }
 
-    public record ScheduleDishChangeRequest(
+    public record ScheduleDishChangeDto(
             UUID dishId,
+            UUID id,
             LocalDateTime scheduledTime,
             DishState targetState,
             String targetName,
             String targetDescription,
             BigDecimal targetPrice
-    ) {}
+    ) {
+        public static ScheduleDishChangeDto from(final ScheduledDishChange change) {
+            return new ScheduleDishChangeDto(
+                    change.getId().id(),
+                    change.getDishId().id(),
+                    change.getScheduledTime(),
+                    change.getTargetState(),
+                    change.getTargetName(),
+                    change.getTargetDescription(),
+                    change.getTargetPrice()
+            );
+        }
+    }
+    public record RestaurantChangesOverviewDto(
+            UUID restaurantId,
+            List<RestaurantDto.DishDto> liveDishes,
+            List<RestaurantDto.ScheduleDishChangeDto> pendingChanges,
+            int pendingCount
+    ) {
+        public static RestaurantChangesOverviewDto from(Restaurant restaurant, List<ScheduledDishChange> changes) {
+            return new RestaurantChangesOverviewDto(
+                    restaurant.getId().id(),
+                    restaurant.getDishes().stream()
+                            .map(dish -> RestaurantDto.DishDto.from(dish, restaurant.getId().id()))
+                            .toList(),
+                    changes.stream()
+                            .map(RestaurantDto.ScheduleDishChangeDto::from)
+                            .toList(),
+                    changes.size()
+            );
+        }
+    }
+
+
+
+
 
 
 }
