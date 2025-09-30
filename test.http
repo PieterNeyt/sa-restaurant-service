@@ -61,7 +61,7 @@ Content-Type: application/json
 
 {
   "dishId": "{{dishId}}",
-  "scheduledTime": "2025-09-29T15:42:01.222",
+  "scheduledTime": "2025-09-30T15:42:01.222",
   "targetState": "NOT_PUBLISHED",
   "targetName": "spaghetti Bolognese",
   "targetDescription": "Verse pasta met huisgemaakte saus",
@@ -74,7 +74,7 @@ Content-Type: application/json
 
 {
   "dishId": "{{dishId2}}",
-  "scheduledTime": "2025-09-29T15:42:01.222",
+  "scheduledTime": "2025-09-30T15:42:01.222",
   "targetState": "NOT_PUBLISHED",
   "targetName": "frietjes",
   "targetDescription": "zonder stoofvlees",

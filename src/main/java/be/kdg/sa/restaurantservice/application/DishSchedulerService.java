@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DishSchedulerService {
 
 
@@ -21,7 +22,7 @@ public class DishSchedulerService {
     private final DishRepository dishRepo;
 
     @Scheduled(fixedRate = 60000) // elke minuut
-    @Transactional
+
     public void executeScheduledChanges() {
         List<ScheduledDishChange> dueChanges = scheduledRepo.findDueChanges(LocalDateTime.now());
 

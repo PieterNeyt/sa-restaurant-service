@@ -47,3 +47,9 @@ We gaan nu beginnen aan de orderservice. We moeten juist nog eens kijken hoe we 
 
 #### Feedback
 *Zijn de velden na gesprek? Wie zorgde voor verschil qua plaatsing t.o.v. het single responsibility principe en moeten het project overlopen om dit op orde te krijgen. Er zit business logica in de Controller die daar niet thuis hoort vs. prijsberekening. We moeten erover waken dat we dit scheiden, want we lopen een beetje achter.*
+
+Stories toewijzen 
+oppassen met getters
+Naamgeving packages met kleine letters
+Naamgeving methodes duidelijker maken bv Put en changes is teveel van het goedde + change in restaurantservice
+ --> als publishing dish wordt gescheduled moet er worden nagekeken of er al 10 published dishes zijn

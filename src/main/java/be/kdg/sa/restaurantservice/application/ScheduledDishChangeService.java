@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ScheduledDishChangeService {
     private final ScheduledDishChangeRepository scheduledRepo;
     private final DishRepository dishRepo;
@@ -33,7 +34,7 @@ public class ScheduledDishChangeService {
         scheduledRepo.save(change);
     }
 
-    @Transactional
+
     public void applyAllPendingChanges(UUID ownerId, UUID restaurantId) {
 
         List<ScheduledDishChange> changes = scheduledRepo.findDueChangesByRestaurantAndOwner(
