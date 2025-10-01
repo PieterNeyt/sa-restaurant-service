@@ -7,10 +7,8 @@ import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
 
 @AggregateRoot
 @Getter
@@ -24,6 +22,7 @@ public class Restaurant {
     private final String email;
     private final String logo;
     private final List<Dish> dishes = new ArrayList<>();
+    private final List<OpeningHour> openingHours = new ArrayList<>();
 
     private boolean isOpen;
     private PriceCategory priceCategory;
@@ -143,5 +142,25 @@ public class Restaurant {
                     dish.changeNameTo(targetName);
                 });
         updatePriceCategory();
+    }
+
+    public void addOpeningHour(OpeningHour openingHour) {
+        Optional<OpeningHour> existing = openingHours.stream()
+                .filter(o -> o.getDayOfWeek() == openingHour.getDayOfWeek())
+                .findFirst();
+
+        if (existing.isPresent()) throw new IllegalArgumentException("Opening hours for this day already exist");
+
+        openingHours.add(openingHour);
+    }
+
+    public void changeOpeningStatus(){
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+        DayOfWeek today = now.getDayOfWeek();
+        LocalTime currentTime = now.toLocalTime();
+
+        this.isOpen = openingHours.stream()
+                .filter(o -> o.getDayOfWeek() == today)
+                .anyMatch(o -> o.isOpenAt(currentTime));
     }
 }
