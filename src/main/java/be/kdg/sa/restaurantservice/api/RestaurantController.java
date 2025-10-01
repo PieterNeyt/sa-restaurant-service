@@ -7,9 +7,9 @@ import be.kdg.sa.restaurantservice.application.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
 import be.kdg.sa.restaurantservice.application.ScheduledDishChangeService;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
-import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.domain.restaurant.Dish;
+import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
+import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

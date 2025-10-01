@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;

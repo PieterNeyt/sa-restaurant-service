@@ -1,10 +1,7 @@
 package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.api.RestaurantDto;
-import be.kdg.sa.restaurantservice.domain.Restaurant.DishId;
-import be.kdg.sa.restaurantservice.domain.Restaurant.DishRepository;
-import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChange;
-import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChangeRepository;
+import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +13,12 @@ import java.util.UUID;
 public class ScheduledDishChangeService {
     private final ScheduledDishChangeRepository scheduledRepo;
     private final DishRepository dishRepo;
+    private final RestaurantRepository restRepo;
 
-    public ScheduledDishChangeService(ScheduledDishChangeRepository scheduledRepo,  DishRepository dishRepo) {
+    public ScheduledDishChangeService(ScheduledDishChangeRepository scheduledRepo, DishRepository dishRepo, RestaurantRepository restRepo) {
         this.scheduledRepo = scheduledRepo;
         this.dishRepo = dishRepo;
+        this.restRepo = restRepo;
     }
 
     public void scheduleDishChange(RestaurantDto.ScheduleDishChangeDto request) {
@@ -40,18 +39,16 @@ public class ScheduledDishChangeService {
         List<ScheduledDishChange> changes = scheduledRepo.findDueChangesByRestaurantAndOwner(
                  restaurantId, ownerId
         );
-
+        Restaurant restaurant = restRepo.findById(restaurantId).orElseThrow();
         for (ScheduledDishChange change : changes) {
-            dishRepo.findById(change.getDishId()).ifPresent(dish -> {
-                dish.setState(change.getTargetState());
-                dish.setName(change.getTargetName());
-                dish.setDescription(change.getTargetDescription());
-                dish.setPrice(change.getTargetPrice());
-
-                dishRepo.save(dish);
+            restaurant.updateDish(change.getDishId(),
+                    change.getTargetState(),
+                    change.getTargetName(),
+                    change.getTargetPrice(),
+                    change.getTargetDescription());
                 scheduledRepo.delete(change);
-            });
         }
+        restRepo.save(restaurant);
     }
 
 

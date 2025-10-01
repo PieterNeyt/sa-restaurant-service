@@ -1,6 +1,6 @@
 package be.kdg.sa.restaurantservice.api;
 
-import be.kdg.sa.restaurantservice.domain.Restaurant.*;
+import be.kdg.sa.restaurantservice.domain.restaurant.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

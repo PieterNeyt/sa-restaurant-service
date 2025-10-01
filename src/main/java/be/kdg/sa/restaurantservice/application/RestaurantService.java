@@ -1,9 +1,9 @@
 package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.api.RestaurantDto;
-import be.kdg.sa.restaurantservice.domain.Address.AddressId;
-import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
-import be.kdg.sa.restaurantservice.domain.Restaurant.*;
+import be.kdg.sa.restaurantservice.domain.address.AddressId;
+import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
+import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +51,7 @@ public class RestaurantService {
 
     public void updateStateDish(UUID dishId, DishState state) {
         Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId).orElseThrow();
-        restaurant.updateDish(dishId,state);
+        restaurant.updateDishState(dishId,state);
         restaurantRepository.save(restaurant);
     }
     public void updateOpenState(UUID restaurantId, UUID requesterId ) {

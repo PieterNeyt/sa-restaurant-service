@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.Owner;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
 import org.jmolecules.ddd.annotation.ValueObject;
 import org.springframework.util.Assert;
@@ -6,11 +6,11 @@ import org.springframework.util.Assert;
 import java.util.UUID;
 
 @ValueObject
-public record OwnerId(UUID id) {
-    public OwnerId {
+public record DishId(UUID id) {
+    public DishId {
         Assert.notNull(id, "id cannot be null");
     }
-    public static OwnerId create() {
-        return new OwnerId(UUID.randomUUID());
+    public static DishId create() {
+        return new DishId(UUID.randomUUID());
     }
 }

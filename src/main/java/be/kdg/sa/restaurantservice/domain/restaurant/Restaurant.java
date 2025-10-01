@@ -1,7 +1,7 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
-import be.kdg.sa.restaurantservice.domain.Address.AddressId;
-import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
+import be.kdg.sa.restaurantservice.domain.address.AddressId;
+import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.springframework.util.Assert;
@@ -86,14 +86,14 @@ public class Restaurant {
         updatePriceCategory();
     }
 
-    public void updateDish(UUID dishId, DishState state) {
+    public void updateDishState(UUID dishId, DishState state) {
         //get Dish
         Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst().orElseThrow();
 
         if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
             throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
 
-        dish.setState(state);
+        dish.changeStateTo(state);
         updatePriceCategory();
     }
 
@@ -133,4 +133,15 @@ public class Restaurant {
         }
     }
 
+    public void updateDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription) {
+        dishes.stream()
+                .filter(d -> d.getId().id().equals(dishId.id()))
+                .findFirst().ifPresent(dish -> {
+                    updateDishState(dishId.id(),targetState);
+                    dish.changePriceTo(targetPrice);
+                    dish.changeDescriptionTo(targetDescription);
+                    dish.changeNameTo(targetName);
+                });
+        updatePriceCategory();
+    }
 }

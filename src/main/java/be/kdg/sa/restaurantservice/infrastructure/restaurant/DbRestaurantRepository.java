@@ -1,7 +1,7 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant;
 
-import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
-import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantRepository;
+import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantRepository;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantEntity;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantRepository;
 import org.springframework.stereotype.Repository;

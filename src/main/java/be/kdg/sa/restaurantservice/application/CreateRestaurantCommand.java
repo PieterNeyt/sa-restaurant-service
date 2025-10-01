@@ -1,6 +1,6 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantType;
+import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
 
 import java.util.List;
 import java.util.UUID;

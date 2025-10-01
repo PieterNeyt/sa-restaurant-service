@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
 import org.jmolecules.ddd.annotation.Repository;
 

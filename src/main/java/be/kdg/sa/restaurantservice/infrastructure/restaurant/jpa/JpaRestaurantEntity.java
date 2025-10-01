@@ -1,11 +1,11 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
-import be.kdg.sa.restaurantservice.domain.Address.AddressId;
-import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
-import be.kdg.sa.restaurantservice.domain.Restaurant.PriceCategory;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
-import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantId;
-import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantType;
+import be.kdg.sa.restaurantservice.domain.address.AddressId;
+import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
+import be.kdg.sa.restaurantservice.domain.restaurant.PriceCategory;
+import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantId;
+import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
