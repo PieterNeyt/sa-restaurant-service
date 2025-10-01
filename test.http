@@ -92,3 +92,13 @@ Content-Type: application/json
 GET http://localhost:8080/api/restaurant/{{restaurantId}}/changesOverview?ownerId={{ownerId}}
 Accept: application/json
 
+### Voeg een opening hour toe aan een restaurant
+POST http://localhost:8080/api/restaurant/{{restaurantId}}/openinghour
+Content-Type: application/json
+
+{
+  "dayOfWeek": "MONDAY",
+  "openingTime": "09:00",
+  "closingTime": "17:00"
+}
+

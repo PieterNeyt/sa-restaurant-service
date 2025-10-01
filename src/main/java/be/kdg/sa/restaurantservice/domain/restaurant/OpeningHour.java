@@ -35,3 +35,4 @@ public class OpeningHour {
         this.closingTime = time;
     }
 }
+

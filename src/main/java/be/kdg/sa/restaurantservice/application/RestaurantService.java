@@ -7,6 +7,8 @@ import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Service
@@ -74,4 +76,11 @@ public class RestaurantService {
         return RestaurantDto.RestaurantChangesOverviewDto.from(restaurant, pendingChanges);
     }
 
+    public OpeningHour addOpenhours(UUID restaurantId, LocalTime closingTime, LocalTime openingTime, DayOfWeek dayOfWeek) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        OpeningHour openingHour = new OpeningHour(dayOfWeek,openingTime,closingTime);
+        restaurant.addOpeningHour(openingHour);
+        restaurantRepository.save(restaurant);
+        return openingHour;
+    }
 }

@@ -10,12 +10,12 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class ScheduledDishChangeService {
+public class ScheduledRestaurantChangeService {
     private final ScheduledDishChangeRepository scheduledRepo;
     private final DishRepository dishRepo;
     private final RestaurantRepository restRepo;
 
-    public ScheduledDishChangeService(ScheduledDishChangeRepository scheduledRepo, DishRepository dishRepo, RestaurantRepository restRepo) {
+    public ScheduledRestaurantChangeService(ScheduledDishChangeRepository scheduledRepo, DishRepository dishRepo, RestaurantRepository restRepo) {
         this.scheduledRepo = scheduledRepo;
         this.dishRepo = dishRepo;
         this.restRepo = restRepo;

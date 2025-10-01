@@ -6,6 +6,7 @@ import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantEn
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +41,13 @@ public class DbRestaurantRepository implements RestaurantRepository {
     @Override
     public Optional<Restaurant> findRestaurantFromDishId(UUID id) {
         return this.jpaRestaurantRepository.findRestaurantIdByDishId(id).map(JpaRestaurantEntity::toDomain);
+    }
+
+    @Override
+    public List<Restaurant> findAll() {
+        return this.jpaRestaurantRepository.findAll().stream()
+                .map(JpaRestaurantEntity::toDomain)
+                .toList();
     }
 
 }
