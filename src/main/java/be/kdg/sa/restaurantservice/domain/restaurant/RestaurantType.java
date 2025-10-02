@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
 public enum RestaurantType {
     FAST_FOOD,

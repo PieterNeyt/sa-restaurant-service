@@ -1,6 +1,6 @@
-package be.kdg.sa.restaurantservice.domain.Owner;
+package be.kdg.sa.restaurantservice.domain.owner;
 
-import be.kdg.sa.restaurantservice.domain.Address.AddressId;
+import be.kdg.sa.restaurantservice.domain.address.AddressId;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 
 

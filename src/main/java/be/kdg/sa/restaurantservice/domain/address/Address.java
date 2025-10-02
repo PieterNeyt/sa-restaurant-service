@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.Address;
+package be.kdg.sa.restaurantservice.domain.address;
 
 import lombok.Getter;
 import lombok.ToString;

@@ -6,10 +6,10 @@ import be.kdg.sa.restaurantservice.api.RestaurantDto.ScheduleDishChangeDto;
 import be.kdg.sa.restaurantservice.application.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
-import be.kdg.sa.restaurantservice.application.ScheduledDishChangeService;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Dish;
-import be.kdg.sa.restaurantservice.domain.Restaurant.DishState;
-import be.kdg.sa.restaurantservice.domain.Restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.application.ScheduledRestaurantChangeService;
+import be.kdg.sa.restaurantservice.domain.restaurant.Dish;
+import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
+import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +19,9 @@ import java.util.UUID;
 @RequestMapping("/api/restaurant")
 public class RestaurantController {
     private final RestaurantService restaurantService;
-    private final ScheduledDishChangeService scheduledDishChangeService;
+    private final ScheduledRestaurantChangeService scheduledDishChangeService;
 
-    public RestaurantController(RestaurantService restaurantService, ScheduledDishChangeService scheduledDishChangeService) {
+    public RestaurantController(RestaurantService restaurantService, ScheduledRestaurantChangeService scheduledDishChangeService) {
         this.restaurantService = restaurantService;
         this.scheduledDishChangeService = scheduledDishChangeService;
     }
@@ -97,7 +97,15 @@ public class RestaurantController {
         var overview = restaurantService.getOverviewForRestaurantAndOwner(restaurantId, ownerId);
         return ResponseEntity.ok(overview);
     }
+    @PostMapping("/{restaurantId}/openinghour")
+    public ResponseEntity<RestaurantDto.OpeningHourDto> addOpeningsHour(
+            @PathVariable UUID restaurantId,
+            @RequestBody RestaurantDto.OpeningHourDto openingHourDto
+            ) {
 
+        var overview = restaurantService.addOpenhours(restaurantId, openingHourDto.closingTime(),openingHourDto.openingTime(),openingHourDto.dayOfWeek());
+        return ResponseEntity.ok(RestaurantDto.OpeningHourDto.from(overview));
+    }
 
 
 

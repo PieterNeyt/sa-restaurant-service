@@ -1,7 +1,8 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
 import org.jmolecules.ddd.annotation.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,4 +16,5 @@ public interface RestaurantRepository {
 
     Optional<Restaurant> findRestaurantFromDishId(UUID id);
 
+    List<Restaurant> findAll();
 }

@@ -1,16 +1,14 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
-import be.kdg.sa.restaurantservice.domain.Address.AddressId;
-import be.kdg.sa.restaurantservice.domain.Owner.OwnerId;
+import be.kdg.sa.restaurantservice.domain.address.AddressId;
+import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
 
 @AggregateRoot
 @Getter
@@ -24,6 +22,7 @@ public class Restaurant {
     private final String email;
     private final String logo;
     private final List<Dish> dishes = new ArrayList<>();
+    private final List<OpeningHour> openingHours = new ArrayList<>();
 
     private boolean isOpen;
     private PriceCategory priceCategory;
@@ -86,14 +85,14 @@ public class Restaurant {
         updatePriceCategory();
     }
 
-    public void updateDish(UUID dishId, DishState state) {
+    public void updateDishState(UUID dishId, DishState state) {
         //get Dish
         Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst().orElseThrow();
 
         if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
             throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
 
-        dish.setState(state);
+        dish.changeStateTo(state);
         updatePriceCategory();
     }
 
@@ -133,4 +132,35 @@ public class Restaurant {
         }
     }
 
+    public void updateDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription) {
+        dishes.stream()
+                .filter(d -> d.getId().id().equals(dishId.id()))
+                .findFirst().ifPresent(dish -> {
+                    updateDishState(dishId.id(),targetState);
+                    dish.changePriceTo(targetPrice);
+                    dish.changeDescriptionTo(targetDescription);
+                    dish.changeNameTo(targetName);
+                });
+        updatePriceCategory();
+    }
+
+    public void addOpeningHour(OpeningHour openingHour) {
+        Optional<OpeningHour> existing = openingHours.stream()
+                .filter(o -> o.getDayOfWeek() == openingHour.getDayOfWeek())
+                .findFirst();
+
+        if (existing.isPresent()) throw new IllegalArgumentException("Opening hours for this day already exist");
+
+        openingHours.add(openingHour);
+    }
+
+    public void changeOpeningStatus(){
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+        DayOfWeek today = now.getDayOfWeek();
+        LocalTime currentTime = now.toLocalTime();
+
+        this.isOpen = openingHours.stream()
+                .filter(o -> o.getDayOfWeek() == today)
+                .anyMatch(o -> o.isOpenAt(currentTime));
+    }
 }

@@ -1,9 +1,11 @@
 package be.kdg.sa.restaurantservice.api;
 
-import be.kdg.sa.restaurantservice.domain.Restaurant.*;
+import be.kdg.sa.restaurantservice.domain.restaurant.*;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +18,9 @@ public record RestaurantDto(UUID id,
                             String logo,
                             List<DishDto> dishes,
                             boolean isOpen,
-                            PriceCategory priceCategory) {
+                            PriceCategory priceCategory,
+                            List<OpeningHourDto> openingHours
+) {
     public static RestaurantDto from(final Restaurant restaurant) {
         return new RestaurantDto(
                 restaurant.getId().id(),
@@ -30,7 +34,10 @@ public record RestaurantDto(UUID id,
                         .map(dish -> DishDto.from(dish, restaurant.getId().id()))
                         .toList(),
                 restaurant.isOpen(),
-                restaurant.getPriceCategory());
+                restaurant.getPriceCategory(),
+                restaurant.getOpeningHours().stream()
+                .map(OpeningHourDto::from)
+                .toList());
     }
     public record DishDto(UUID id, UUID RestaurantId, String name, String description, BigDecimal price,
                           DishState dishState) {
@@ -82,6 +89,20 @@ public record RestaurantDto(UUID id,
                             .map(RestaurantDto.ScheduleDishChangeDto::from)
                             .toList(),
                     changes.size()
+            );
+        }
+    }
+
+    public record OpeningHourDto(
+            DayOfWeek dayOfWeek,
+            LocalTime openingTime,
+            LocalTime closingTime
+    ) {
+        public static OpeningHourDto from(OpeningHour openingHour) {
+            return new OpeningHourDto(
+                    openingHour.getDayOfWeek(),
+                    openingHour.getOpeningTime(),
+                    openingHour.getClosingTime()
             );
         }
     }

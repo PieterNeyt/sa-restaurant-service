@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.Address;
+package be.kdg.sa.restaurantservice.domain.address;
 
 import org.jmolecules.ddd.annotation.ValueObject;
 import org.springframework.util.Assert;

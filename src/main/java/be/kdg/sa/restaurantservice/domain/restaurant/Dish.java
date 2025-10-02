@@ -1,7 +1,6 @@
-package be.kdg.sa.restaurantservice.domain.Restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.jmolecules.ddd.annotation.Entity;
 import org.springframework.util.Assert;
 
@@ -11,13 +10,9 @@ import java.math.BigDecimal;
 @Getter
 public class Dish {
     private final DishId id;
-    @Setter
     private String name;
-    @Setter
     private String description;
-    @Setter
     private BigDecimal price;
-    @Setter
     private DishState state;
 
     public Dish(String name, String description, BigDecimal price) {
@@ -61,5 +56,11 @@ public class Dish {
         this.price = newPrice;
     }
 
+    public void changeStateTo(DishState targetState) {
+        if(targetState == null) {
+            throw new IllegalArgumentException("State must not be null");
+        }
+        this.state = targetState;
+    }
 }
 
