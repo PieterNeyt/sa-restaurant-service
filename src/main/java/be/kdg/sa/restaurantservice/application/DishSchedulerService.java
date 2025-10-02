@@ -1,6 +1,9 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.domain.restaurant.*;
+import be.kdg.sa.restaurantservice.domain.Restaurant.DishRepository;
+import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantRepository;
+import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChange;
+import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChangeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,6 +38,7 @@ public class DishSchedulerService {
                 scheduledRepo.delete(change);
 
             }, () -> {
+
             });
         }
     }
