@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -82,5 +83,13 @@ public class RestaurantService {
         restaurant.addOpeningHour(openingHour);
         restaurantRepository.save(restaurant);
         return openingHour;
+    }
+
+    public List<Restaurant> getAllRestaurants() {
+        return restaurantRepository.findAll();
+    }
+
+    public Restaurant getRestaurantById(UUID restaurantId) {
+        return restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
     }
 }

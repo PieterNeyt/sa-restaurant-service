@@ -8,7 +8,7 @@ Content-Type: application/json
   "ownerId": "{{ownerId}}",
   "addressId": "b12d5c1a-3d1f-4b8f-9f9a-11a2b3c4d5e6",
   "restaurantType": "BUFFET",
-  "name": "La Bella Vita",
+  "name": "La Bella",
   "email": "info@labellavita.com",
   "logo": "https://example.com/logo.png",
   "dishes": []

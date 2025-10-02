@@ -13,7 +13,9 @@ import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/restaurant")
@@ -45,7 +47,6 @@ public class RestaurantController {
         Restaurant restaurant = restaurantService.createRestaurant(command);
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }
-
     @PostMapping("/addDish")
     public ResponseEntity<RestaurantDto.DishDto> addDish(@RequestBody DishDto dishDto) {
         CreateDishCommand command = new CreateDishCommand(
@@ -57,6 +58,14 @@ public class RestaurantController {
         );
         Dish dish = restaurantService.createDish(command);
         return ResponseEntity.ok(DishDto.from(dish,dishDto.RestaurantId()));
+    }
+    @CrossOrigin(origins = "http://localhost:9090")
+    @GetMapping("/{restaurantId}/dishes")
+    public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {
+
+        Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
+
+        return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }
 
     @PutMapping("/changeStateDish/{id}")
@@ -105,6 +114,12 @@ public class RestaurantController {
 
         var overview = restaurantService.addOpenhours(restaurantId, openingHourDto.closingTime(),openingHourDto.openingTime(),openingHourDto.dayOfWeek());
         return ResponseEntity.ok(RestaurantDto.OpeningHourDto.from(overview));
+    }
+    @CrossOrigin(origins = "http://localhost:9090")
+    @GetMapping("/get")
+    public ResponseEntity<List<GetAllRestaurantDto>> getOpeningHours(){
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+        return ResponseEntity.ok(restaurants.stream().map(GetAllRestaurantDto::from).toList());
     }
 
 
