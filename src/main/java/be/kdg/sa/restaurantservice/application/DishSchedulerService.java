@@ -1,9 +1,9 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.domain.Restaurant.DishRepository;
-import be.kdg.sa.restaurantservice.domain.Restaurant.RestaurantRepository;
-import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChange;
-import be.kdg.sa.restaurantservice.domain.Restaurant.ScheduledDishChangeRepository;
+import be.kdg.sa.restaurantservice.domain.restaurant.DishRepository;
+import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantRepository;
+import be.kdg.sa.restaurantservice.domain.restaurant.ScheduledDishChange;
+import be.kdg.sa.restaurantservice.domain.restaurant.ScheduledDishChangeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -92,4 +92,8 @@ public class RestaurantService {
     public Restaurant getRestaurantById(UUID restaurantId) {
         return restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
     }
+
+    public Restaurant GetRestaurantWothDishFromDish(UUID id) {
+        return restaurantRepository.findRestaurantFromDishId(id).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+    }
 }

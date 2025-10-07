@@ -47,6 +47,7 @@ public class RestaurantController {
         Restaurant restaurant = restaurantService.createRestaurant(command);
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }
+
     @PostMapping("/addDish")
     public ResponseEntity<RestaurantDto.DishDto> addDish(@RequestBody DishDto dishDto) {
         CreateDishCommand command = new CreateDishCommand(
@@ -59,6 +60,15 @@ public class RestaurantController {
         Dish dish = restaurantService.createDish(command);
         return ResponseEntity.ok(DishDto.from(dish,dishDto.RestaurantId()));
     }
+
+    @CrossOrigin(origins = "http://localhost:9090")
+    @GetMapping("/dish/{id}")
+    public ResponseEntity<RestaurantDto.DishDto> getDish(@PathVariable("id") UUID id) {
+        Restaurant restaurant = restaurantService.GetRestaurantWothDishFromDish(id);
+        Dish dish = restaurant.getDishes().stream().filter(d -> d.getId().id().equals(id)).findFirst().orElseThrow();
+        return ResponseEntity.ok(DishDto.from(dish,restaurant.getId().id()));
+    }
+
     @CrossOrigin(origins = "http://localhost:9090")
     @GetMapping("/{restaurantId}/dishes")
     public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {

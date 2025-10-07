@@ -17,4 +17,5 @@ public interface RestaurantRepository {
     Optional<Restaurant> findRestaurantFromDishId(UUID id);
 
     List<Restaurant> findAll();
+
 }
