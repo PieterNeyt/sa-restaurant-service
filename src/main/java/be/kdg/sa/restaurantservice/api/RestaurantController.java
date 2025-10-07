@@ -3,16 +3,18 @@ package be.kdg.sa.restaurantservice.api;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.DishDto;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.RestaurantChangesOverviewDto;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.ScheduleDishChangeDto;
-import be.kdg.sa.restaurantservice.application.CreateDishCommand;
-import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
-import be.kdg.sa.restaurantservice.application.RestaurantService;
-import be.kdg.sa.restaurantservice.application.ScheduledRestaurantChangeService;
+import be.kdg.sa.restaurantservice.application.*;
+import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.restaurant.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -24,10 +26,12 @@ import java.util.stream.Collectors;
 public class RestaurantController {
     private final RestaurantService restaurantService;
     private final ScheduledRestaurantChangeService scheduledDishChangeService;
+    private final CheckoutService checkoutService;
 
-    public RestaurantController(RestaurantService restaurantService, ScheduledRestaurantChangeService scheduledDishChangeService) {
+    public RestaurantController(RestaurantService restaurantService, ScheduledRestaurantChangeService scheduledDishChangeService, CheckoutService checkoutService) {
         this.restaurantService = restaurantService;
         this.scheduledDishChangeService = scheduledDishChangeService;
+        this.checkoutService = checkoutService;
     }
 
 
@@ -136,11 +140,15 @@ public class RestaurantController {
 
 
 
-
-
-
-
-
-
+    @PostMapping("/prepareCheckout")
+    public ResponseEntity<?> prepareCheckout(@RequestBody CheckoutRequestDto checkoutRequest) {
+        try {
+            var response = checkoutService.prepareCheckout(checkoutRequest);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+    }
 
 }
