@@ -9,7 +9,8 @@ public record CreateDishCommand(UUID restaurantId,
                                 String name,
                                 String description,
                                 BigDecimal price,
-                                DishState dishState
+                                DishState dishState,
+                                int preparationTime
 ) {
 
 }

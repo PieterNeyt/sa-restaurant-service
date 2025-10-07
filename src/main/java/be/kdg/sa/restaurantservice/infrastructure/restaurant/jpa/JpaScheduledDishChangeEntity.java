@@ -35,6 +35,9 @@ public class JpaScheduledDishChangeEntity {
     @Column(nullable = false)
     private BigDecimal targetPrice;
 
+    @Column(nullable = false)
+    private int preparationTime;
+
     protected JpaScheduledDishChangeEntity() {}
 
     public JpaScheduledDishChangeEntity(UUID id, UUID dishId,
@@ -42,7 +45,8 @@ public class JpaScheduledDishChangeEntity {
                                         DishState targetState,
                                         String targetName,
                                         String targetDescription,
-                                        BigDecimal targetPrice) {
+                                        BigDecimal targetPrice,
+                                        int preparationTime) {
         this.id = id;
         this.dishId = dishId;
         this.scheduledTime = scheduledTime;
@@ -50,6 +54,7 @@ public class JpaScheduledDishChangeEntity {
         this.targetName = targetName;
         this.targetDescription = targetDescription;
         this.targetPrice = targetPrice;
+        this.preparationTime = preparationTime;
     }
 
     public static JpaScheduledDishChangeEntity fromDomain(ScheduledDishChange change) {
@@ -60,7 +65,8 @@ public class JpaScheduledDishChangeEntity {
                 change.getTargetState(),
                 change.getTargetName(),
                 change.getTargetDescription(),
-                change.getTargetPrice()
+                change.getTargetPrice(),
+                change.getPreparationTime()
         );
     }
 
@@ -72,7 +78,9 @@ public class JpaScheduledDishChangeEntity {
                 targetState,
                 targetName,
                 targetDescription,
-                targetPrice
+                targetPrice,
+                preparationTime
+
         );
     }
 }

@@ -17,13 +17,15 @@ public class ScheduledDishChange {
     private final String targetName;
     private final String targetDescription;
     private final BigDecimal targetPrice;
+    private final int preparationTime;
 
     public ScheduledDishChange(DishId dishId,
                                LocalDateTime scheduledTime,
                                DishState targetState,
                                String targetName,
                                String targetDescription,
-                               BigDecimal targetPrice) {
+                               BigDecimal targetPrice,
+                               int preparationTime) {
         this.id = ScheduledDishChangeId.create();
         this.dishId = dishId;
         this.scheduledTime = scheduledTime;
@@ -31,6 +33,7 @@ public class ScheduledDishChange {
         this.targetName = targetName;
         this.targetDescription = targetDescription;
         this.targetPrice = targetPrice;
+        this.preparationTime= preparationTime;
     }
 
     public ScheduledDishChange(ScheduledDishChangeId id,
@@ -39,7 +42,8 @@ public class ScheduledDishChange {
                                DishState targetState,
                                String targetName,
                                String targetDescription,
-                               BigDecimal targetPrice) {
+                               BigDecimal targetPrice,
+                               int  preparationTime) {
         this.id = id;
         this.dishId = dishId;
         this.scheduledTime = scheduledTime;
@@ -47,6 +51,7 @@ public class ScheduledDishChange {
         this.targetName = targetName;
         this.targetDescription = targetDescription;
         this.targetPrice = targetPrice;
+        this.preparationTime = preparationTime;
     }
 }
 

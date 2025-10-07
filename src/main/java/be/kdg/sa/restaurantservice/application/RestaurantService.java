@@ -41,12 +41,12 @@ public class RestaurantService {
     }
 
     public Dish createDish(CreateDishCommand command) {
-        Dish dish = new Dish(command.name(),command.description(),command.price());
+        Dish dish = new Dish(command.name(),command.description(),command.price(),command.preparationTime());
 
         Restaurant restaurant =  restaurantRepository.findById(command.restaurantId())
                 .orElseThrow();
 
-        restaurant.addDish(dish.getId().id(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice());
+        restaurant.addDish(dish.getId().id(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice(),dish.getPreparationTime());
 
         restaurantRepository.save(restaurant);
         return dish;

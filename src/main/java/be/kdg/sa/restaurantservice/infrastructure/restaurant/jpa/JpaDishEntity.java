@@ -26,6 +26,10 @@ public class JpaDishEntity {
     @Setter
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Setter
+    @Column(nullable = false)
+    private int preparationTime;
     @Setter
     @Enumerated(EnumType.STRING)
 
@@ -44,12 +48,13 @@ public class JpaDishEntity {
 
     protected JpaDishEntity() {}
 
-    public JpaDishEntity(UUID id, String name, String description, BigDecimal price, DishState state) {
+    public JpaDishEntity(UUID id, String name, String description, BigDecimal price, DishState state, int  preparationTime) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.state = state;
+        this.preparationTime = preparationTime;
     }
 
     public static JpaDishEntity fromDomain(Dish dish) {
@@ -58,12 +63,13 @@ public class JpaDishEntity {
                 dish.getName(),
                 dish.getDescription(),
                 dish.getPrice(),
-                dish.getState()
+                dish.getState(),
+                dish.getPreparationTime()
         );
     }
 
     public Dish toDomain() {
-        return new Dish(new DishId(id),state,name,description,price);
+        return new Dish(new DishId(id),state,name,description,price,preparationTime);
     }
 
 }

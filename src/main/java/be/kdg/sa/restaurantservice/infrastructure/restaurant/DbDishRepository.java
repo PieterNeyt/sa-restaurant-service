@@ -32,6 +32,7 @@ public class DbDishRepository implements DishRepository {
             entity.setName(dish.getName());
             entity.setDescription(dish.getDescription());
             entity.setPrice(dish.getPrice());
+            entity.setPreparationTime(dish.getPreparationTime());
             jpa.save(entity);
         } else {
             jpa.save(JpaDishEntity.fromDomain(dish));

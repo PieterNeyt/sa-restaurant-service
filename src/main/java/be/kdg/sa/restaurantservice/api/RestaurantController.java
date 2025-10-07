@@ -13,12 +13,14 @@ import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/restaurant")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:9090"})
 public class RestaurantController {
     private final RestaurantService restaurantService;
     private final ScheduledRestaurantChangeService scheduledDishChangeService;
@@ -55,13 +57,13 @@ public class RestaurantController {
                 dishDto.name(),
                 dishDto.description(),
                 dishDto.price(),
-                DishState.NOT_PUBLISHED
+                DishState.NOT_PUBLISHED,
+                dishDto.preparationTime()
         );
         Dish dish = restaurantService.createDish(command);
         return ResponseEntity.ok(DishDto.from(dish,dishDto.RestaurantId()));
     }
 
-    @CrossOrigin(origins = "http://localhost:9090")
     @GetMapping("/dish/{id}")
     public ResponseEntity<RestaurantDto.DishDto> getDish(@PathVariable("id") UUID id) {
         Restaurant restaurant = restaurantService.GetRestaurantWothDishFromDish(id);
@@ -69,7 +71,7 @@ public class RestaurantController {
         return ResponseEntity.ok(DishDto.from(dish,restaurant.getId().id()));
     }
 
-    @CrossOrigin(origins = "http://localhost:9090")
+
     @GetMapping("/{restaurantId}/dishes")
     public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {
 
@@ -125,12 +127,17 @@ public class RestaurantController {
         var overview = restaurantService.addOpenhours(restaurantId, openingHourDto.closingTime(),openingHourDto.openingTime(),openingHourDto.dayOfWeek());
         return ResponseEntity.ok(RestaurantDto.OpeningHourDto.from(overview));
     }
-    @CrossOrigin(origins = "http://localhost:9090")
+
     @GetMapping("/get")
     public ResponseEntity<List<GetAllRestaurantDto>> getOpeningHours(){
         List<Restaurant> restaurants = restaurantService.getAllRestaurants();
         return ResponseEntity.ok(restaurants.stream().map(GetAllRestaurantDto::from).toList());
     }
+
+
+
+
+
 
 
 

@@ -80,8 +80,8 @@ public class Restaurant {
     }
 
 
-    public void addDish(UUID id, String description, String name, DishState state, BigDecimal price) {
-        dishes.add(new Dish(new DishId(id), state, name, description, price));
+    public void addDish(UUID id, String description, String name, DishState state, BigDecimal price, int preparationTime) {
+        dishes.add(new Dish(new DishId(id), state, name, description, price, preparationTime));
         updatePriceCategory();
     }
 
@@ -132,7 +132,7 @@ public class Restaurant {
         }
     }
 
-    public void updateDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription) {
+    public void updateDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription, int targetPreparationTime) {
         dishes.stream()
                 .filter(d -> d.getId().id().equals(dishId.id()))
                 .findFirst().ifPresent(dish -> {
@@ -140,6 +140,7 @@ public class Restaurant {
                     dish.changePriceTo(targetPrice);
                     dish.changeDescriptionTo(targetDescription);
                     dish.changeNameTo(targetName);
+                    dish.changePreparationTime(targetPreparationTime);
                 });
         updatePriceCategory();
     }

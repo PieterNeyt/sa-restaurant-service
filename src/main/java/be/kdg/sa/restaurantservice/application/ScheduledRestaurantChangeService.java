@@ -28,7 +28,9 @@ public class ScheduledRestaurantChangeService {
                 request.targetState(),
                 request.targetName(),
                 request.targetDescription(),
-                request.targetPrice()
+                request.targetPrice(),
+                request.targetPreparationTime()
+
         );
         scheduledRepo.save(change);
     }
@@ -45,7 +47,9 @@ public class ScheduledRestaurantChangeService {
                     change.getTargetState(),
                     change.getTargetName(),
                     change.getTargetPrice(),
-                    change.getTargetDescription());
+                    change.getTargetDescription(),
+                    change.getPreparationTime());
+
                 scheduledRepo.delete(change);
         }
         restRepo.save(restaurant);

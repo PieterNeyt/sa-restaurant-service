@@ -33,7 +33,7 @@ public class DishSchedulerService {
                 dish.changeNameTo(change.getTargetName());
                 dish.changeDescriptionTo(change.getTargetDescription());
                 dish.changePriceTo(change.getTargetPrice());
-
+                dish.changePreparationTime(change.getPreparationTime());
                 dishRepo.save(dish);
                 scheduledRepo.delete(change);
 

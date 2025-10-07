@@ -25,7 +25,8 @@ Content-Type: application/json
   "RestaurantId": "{{restaurantId}}",
   "name": "Spaghetti Bolognese",
   "description": "Classic Italian pasta with meat sauce",
-  "price": 12.50
+  "price": 12.50,
+  "preparationTime": 15
 }
 
 > {% client.global.set("dishId", response.body.id); %}
@@ -38,7 +39,9 @@ Content-Type: application/json
   "RestaurantId": "{{restaurantId}}",
   "name": "frietjes",
   "description": "met stoofvlees",
-  "price": 20
+  "price": 20,
+  "preparationTime": 15
+
 }
 
 > {% client.global.set("dishId2", response.body.id); %}
@@ -61,11 +64,12 @@ Content-Type: application/json
 
 {
   "dishId": "{{dishId}}",
-  "scheduledTime": "2025-09-30T15:42:01.222",
+  "scheduledTime": "2025-10-08T15:42:01.222",
   "targetState": "NOT_PUBLISHED",
   "targetName": "spaghetti Bolognese",
   "targetDescription": "Verse pasta met huisgemaakte saus",
-  "targetPrice": 15
+  "targetPrice": 15,
+  "targetPreparationTime": 20
 }
 
 ### 5.1 Schedule een tweede dish change (bv. naar NOT_PUBLISHED over 2 minuten)
@@ -74,11 +78,12 @@ Content-Type: application/json
 
 {
   "dishId": "{{dishId2}}",
-  "scheduledTime": "2025-09-30T15:42:01.222",
+   "scheduledTime": "2025-10-08T15:42:01.222",
   "targetState": "NOT_PUBLISHED",
   "targetName": "frietjes",
   "targetDescription": "zonder stoofvlees",
-  "targetPrice": 15
+  "targetPrice": 15,
+  "targetPreparationTime": 25
 }
 
 

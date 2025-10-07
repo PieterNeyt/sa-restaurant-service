@@ -106,7 +106,8 @@ public class JpaRestaurantEntity {
                 dish.getDescription(),
                 dish.getName(),
                 dish.getState(),
-                dish.getPrice())
+                dish.getPrice(),
+                dish.getPreparationTime())
         );
         openingHours.forEach(oh -> restaurant.addOpeningHour(
                 new OpeningHour(

@@ -40,7 +40,7 @@ public record RestaurantDto(UUID id,
                 .toList());
     }
     public record DishDto(UUID id, UUID RestaurantId, String name, String description, BigDecimal price,
-                          DishState dishState) {
+                          DishState dishState, int preparationTime) {
         public static DishDto from(final Dish dish,UUID restaurantId) {
             return new DishDto(
                     dish.getId().id(),
@@ -48,7 +48,8 @@ public record RestaurantDto(UUID id,
                     dish.getName(),
                     dish.getDescription(),
                     dish.getPrice(),
-                    dish.getState());
+                    dish.getState(),
+                    dish.getPreparationTime());
         }
     }
 
@@ -59,7 +60,8 @@ public record RestaurantDto(UUID id,
             DishState targetState,
             String targetName,
             String targetDescription,
-            BigDecimal targetPrice
+            BigDecimal targetPrice,
+            int targetPreparationTime
     ) {
         public static ScheduleDishChangeDto from(final ScheduledDishChange change) {
             return new ScheduleDishChangeDto(
@@ -69,7 +71,8 @@ public record RestaurantDto(UUID id,
                     change.getTargetState(),
                     change.getTargetName(),
                     change.getTargetDescription(),
-                    change.getTargetPrice()
+                    change.getTargetPrice(),
+                    change.getPreparationTime()
             );
         }
     }
