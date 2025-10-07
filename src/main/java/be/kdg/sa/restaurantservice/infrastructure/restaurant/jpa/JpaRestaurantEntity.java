@@ -18,7 +18,7 @@ public class JpaRestaurantEntity {
     private UUID id;
     @Column(nullable = false)
     private UUID ownerId;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private UUID addresId;
 
 
