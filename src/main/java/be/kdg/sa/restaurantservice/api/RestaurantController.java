@@ -150,5 +150,15 @@ public class RestaurantController {
                     .body(e.getMessage());
         }
     }
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkout(@RequestBody CheckoutRequestDto checkoutRequest) {
+        try {
+            var response = checkoutService.checkout(checkoutRequest);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+    }
 
 }

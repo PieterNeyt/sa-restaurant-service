@@ -45,10 +45,24 @@ public class CheckoutService {
         var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
 
         if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-           throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+         //  throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
         }
 
 
-        return new CheckoutResponseDto(checkoutRequest.orderId());
+        return new CheckoutResponseDto(checkoutRequest.orderId(),true);
     }
+
+    // deze methode moet wrs ook nog aangepast worden
+    public CheckoutResponseDto checkout(CheckoutRequestDto checkoutRequest) {
+        // Herberekenen
+        CheckoutResponseDto prepared = prepareCheckout(checkoutRequest);
+
+        if (!prepared.canBePrepared()) {
+            throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+        }
+
+
+        return prepared;
+    }
+
 }
