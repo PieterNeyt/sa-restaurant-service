@@ -38,20 +38,24 @@ public class RestaurantController {
 
 
     @PostMapping("/addRestaurant")
-    public ResponseEntity<RestaurantDto> addRestaurant(@RequestBody RestaurantDto restaurantDto) {
+    public ResponseEntity<?> addRestaurant(@RequestBody RestaurantDto restaurantDto) {
+        try {
+            CreateRestaurantCommand command = new CreateRestaurantCommand(
+                    restaurantDto.ownerId(),
+                    restaurantDto.addressId(),
+                    restaurantDto.restaurantType(),
+                    restaurantDto.name(),
+                    restaurantDto.email(),
+                    restaurantDto.logo(),
+                    restaurantDto.dishes()
+            );
 
-        CreateRestaurantCommand command = new CreateRestaurantCommand(
-                restaurantDto.ownerId(),
-                restaurantDto.addressId(),
-                restaurantDto.restaurantType(),
-                restaurantDto.name(),
-                restaurantDto.email(),
-                restaurantDto.logo(),
-                restaurantDto.dishes()
-        );
+            Restaurant restaurant = restaurantService.createRestaurant(command);
+            return ResponseEntity.ok(RestaurantDto.from(restaurant));
 
-        Restaurant restaurant = restaurantService.createRestaurant(command);
-        return ResponseEntity.ok(RestaurantDto.from(restaurant));
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @PostMapping("/addDish")
