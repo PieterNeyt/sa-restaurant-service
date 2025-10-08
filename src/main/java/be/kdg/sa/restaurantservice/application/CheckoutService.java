@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice.application;
 import be.kdg.sa.restaurantservice.api.CheckoutRequestDto;
 import be.kdg.sa.restaurantservice.api.CheckoutResponseDto;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
+import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,24 +46,45 @@ public class CheckoutService {
         var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
 
         if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-         //  throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+          throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
         }
 
 
-        return new CheckoutResponseDto(checkoutRequest.orderId(),true);
+        return new CheckoutResponseDto(checkoutRequest.orderId(), true, "Checkout voorbereid");
     }
 
-    // deze methode moet wrs ook nog aangepast worden
+
     public CheckoutResponseDto checkout(CheckoutRequestDto checkoutRequest) {
-        // Herberekenen
-        CheckoutResponseDto prepared = prepareCheckout(checkoutRequest);
 
-        if (!prepared.canBePrepared()) {
-            throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+        prepareCheckout(checkoutRequest);
+
+
+        for (var item : checkoutRequest.items()) {
+            var restaurant = restaurantService.GetRestaurantWothDishFromDish(item.dishId());
+            var dish = restaurant.getDishes().stream()
+                    .filter(d -> d.getId().id().equals(item.dishId()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Dish not found"));
+
+
+            if (dish.getPrice().compareTo(item.price()) != 0 ||
+                    !dish.getName().equals(item.name()) ||
+                    dish.getPreparationTime() != item.preparationTime()) {
+
+                throw new IllegalStateException(String.format(
+                        "Dish %s is gewijzigd (prijs of eigenschappen verschillen). " +
+                                "Verwacht: €%s, actueel: €%s",
+                        dish.getName(), item.price(), dish.getPrice()
+                ));
+            }
+
+            if (dish.getState() != DishState.PUBLISHED) {
+                throw new IllegalStateException("Dish " + dish.getName() + " is niet beschikbaar.");
+            }
         }
 
-
-        return prepared;
+        return new CheckoutResponseDto(checkoutRequest.orderId(), true, "Checkout succesvol");
     }
+
 
 }
