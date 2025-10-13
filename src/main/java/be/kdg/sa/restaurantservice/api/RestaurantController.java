@@ -5,8 +5,8 @@ import be.kdg.sa.restaurantservice.api.RestaurantDto.RestaurantChangesOverviewDt
 import be.kdg.sa.restaurantservice.api.RestaurantDto.ScheduleDishChangeDto;
 import be.kdg.sa.restaurantservice.application.*;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
-import be.kdg.sa.restaurantservice.domain.restaurant.Dish;
-import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,17 +15,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:9090")
 @RequestMapping("/api/restaurant")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:9090"})
 public class RestaurantController {
     private final RestaurantService restaurantService;
     private final ScheduledRestaurantChangeService scheduledDishChangeService;
@@ -42,13 +37,18 @@ public class RestaurantController {
     }
 
 
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantDto> getAllDishes(@PathVariable("restaurantId") UUID restaurantId) {
+        Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
+
+        return ResponseEntity.ok(RestaurantDto.from(restaurant));
+    }
+
+    @PostMapping()
     @PreAuthorize("hasAuthority('owner')")
-    @PostMapping("/addRestaurant")
     public ResponseEntity<?> addRestaurant(@RequestBody RestaurantDto restaurantDto, @AuthenticationPrincipal Jwt token) {
-        try {
 
             UUID ownerId = getOwnerIdFromToken(token);
-
             CreateRestaurantCommand command = new CreateRestaurantCommand(
                     ownerId,
                     restaurantDto.addressId(),
@@ -61,13 +61,25 @@ public class RestaurantController {
 
             Restaurant restaurant = restaurantService.createRestaurant(command);
             return ResponseEntity.ok(RestaurantDto.from(restaurant));
-
-        } catch (IllegalStateException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
     }
+
+    @GetMapping()
+    public ResponseEntity<List<GetAllRestaurantDto>> getRestaurants(){
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+        return ResponseEntity.ok(restaurants.stream().map(GetAllRestaurantDto::from).toList());
+    }
+
+    @PutMapping("/{id}/changeOpenState")
+    public ResponseEntity<Void> changeOpenState(
+            @PathVariable("id") UUID restaurantId,
+            @RequestParam("ownerId") UUID ownerId
+    ) {
+        restaurantService.updateOpenState(restaurantId, ownerId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/dish")
     @PreAuthorize("hasAuthority('owner')")
-    @PostMapping("/addDish")
     public ResponseEntity<RestaurantDto.DishDto> addDish(@RequestBody DishDto dishDto) {
         CreateDishCommand command = new CreateDishCommand(
                 dishDto.RestaurantId(),
@@ -83,19 +95,20 @@ public class RestaurantController {
 
     @GetMapping("/dish/{id}")
     public ResponseEntity<RestaurantDto.DishDto> getDish(@PathVariable("id") UUID id) {
-        Restaurant restaurant = restaurantService.GetRestaurantWothDishFromDish(id);
+        Restaurant restaurant = restaurantService.GetRestaurantWithDishFromDish(id);
         Dish dish = restaurant.getDishes().stream().filter(d -> d.getId().id().equals(id)).findFirst().orElseThrow();
         return ResponseEntity.ok(DishDto.from(dish,restaurant.getId().id()));
     }
 
+    @PutMapping("/dish/{id}/state")
     @PreAuthorize("hasAuthority('owner')")
-    @GetMapping("/{restaurantId}/dishes")
     public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {
 
         Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
 
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }
+
     @PreAuthorize("hasAuthority('owner')")
     @PutMapping("/changeStateDish/{id}")
     public ResponseEntity<Void> changeStateDish(@PathVariable("id") UUID id,
@@ -152,33 +165,17 @@ public class RestaurantController {
         return ResponseEntity.ok(RestaurantDto.OpeningHourDto.from(overview));
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<List<GetAllRestaurantDto>> getOpeningHours(){
-        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
-        return ResponseEntity.ok(restaurants.stream().map(GetAllRestaurantDto::from).toList());
-    }
-
-
 
     @PostMapping("/prepareCheckout")
     public ResponseEntity<?> prepareCheckout(@RequestBody CheckoutRequestDto checkoutRequest) {
-        try {
-            var response = checkoutService.prepareCheckout(checkoutRequest);
-            return ResponseEntity.ok(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
+        var response = checkoutService.prepareCheckout(checkoutRequest);
+        return ResponseEntity.ok(response);
+
     }
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody CheckoutRequestDto checkoutRequest) {
-        try {
-            var response = checkoutService.checkout(checkoutRequest);
-            return ResponseEntity.ok(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
+        var response = checkoutService.checkout(checkoutRequest);
+        return ResponseEntity.ok(response);
     }
 
 }

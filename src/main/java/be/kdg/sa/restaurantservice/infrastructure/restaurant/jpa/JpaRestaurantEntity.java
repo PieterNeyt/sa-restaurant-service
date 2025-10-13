@@ -18,7 +18,7 @@ public class JpaRestaurantEntity {
     private UUID id;
     @Column(nullable = false)
     private UUID ownerId;
-    @Column(nullable = true)
+    @Column()
     private UUID addresId;
 
 
@@ -109,11 +109,11 @@ public class JpaRestaurantEntity {
                 dish.getPrice(),
                 dish.getPreparationTime())
         );
-        openingHours.forEach(oh -> restaurant.addOpeningHour(
-                new OpeningHour(
+        openingHours.forEach(oh ->
+                restaurant.addOpeningHour(
                         oh.getDayOfWeek(),
                         oh.getOpeningTime(),
-                        oh.getOpeningTime()))
+                        oh.getClosingTime())
         );
 
         return restaurant;

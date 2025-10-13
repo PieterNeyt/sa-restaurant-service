@@ -1,9 +1,7 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant;
 
-import be.kdg.sa.restaurantservice.domain.restaurant.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantRepository;
-import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaDishEntity;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantEntity;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantRepository;
 import org.springframework.stereotype.Repository;
@@ -23,11 +21,7 @@ public class DbRestaurantRepository implements RestaurantRepository {
     @Override
     public void save(Restaurant restaurant) {
         JpaRestaurantEntity jpaRestaurant =JpaRestaurantEntity.fromDomain(restaurant);
-        JpaRestaurantEntity savedEntity = this.jpaRestaurantRepository.save(jpaRestaurant);
-        //checken dat het wel degelijk gesaved is
-        if (savedEntity.getId() == null) {
-            throw new RuntimeException("Failed to save restaurant");
-        }
+        this.jpaRestaurantRepository.save(jpaRestaurant);
     }
 
     @Override
@@ -47,9 +41,7 @@ public class DbRestaurantRepository implements RestaurantRepository {
 
     @Override
     public List<Restaurant> findAll() {
-        return this.jpaRestaurantRepository.findAll().stream()
-                .map(JpaRestaurantEntity::toDomain)
-                .toList();
+        return jpaRestaurantRepository.findAll().stream().map(JpaRestaurantEntity::toDomain).toList();
     }
 
 }

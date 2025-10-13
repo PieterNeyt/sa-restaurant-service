@@ -1,6 +1,9 @@
 package be.kdg.sa.restaurantservice.api;
 
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
+import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -41,7 +44,7 @@ public record RestaurantDto(UUID id,
     }
     public record DishDto(UUID id, UUID RestaurantId, String name, String description, BigDecimal price,
                           DishState dishState, int preparationTime) {
-        public static DishDto from(final Dish dish,UUID restaurantId) {
+        public static DishDto from(final Dish dish, UUID restaurantId) {
             return new DishDto(
                     dish.getId().id(),
                     restaurantId,

@@ -1,5 +1,7 @@
-package be.kdg.sa.restaurantservice.domain.restaurant;
+package be.kdg.sa.restaurantservice.domain.schedulechange;
 
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
 

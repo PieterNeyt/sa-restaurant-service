@@ -15,7 +15,7 @@ public class OpeningHour {
     private LocalTime closingTime;
 
     public OpeningHour(DayOfWeek dayOfWeek, LocalTime openingTime, LocalTime closingTime) {
-      //  Assert.isTrue(openingTime.isBefore(closingTime), "Start time should be before end time");
+        Assert.isTrue(openingTime.isBefore(closingTime), "Start time should be before end time");
 
         this.dayOfWeek = dayOfWeek;
         this.openingTime = openingTime;

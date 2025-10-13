@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant.dish;
 
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
@@ -17,6 +17,14 @@ public class Dish {
     private int preparationTime;
 
     public Dish(String name, String description, BigDecimal price, int preparationTime) {
+        Assert.notNull(price, "Price must not be null");
+
+        Assert.hasText(name, "Name must not be blank");
+        Assert.hasText(description, "Description must not be blank");
+
+        Assert.isTrue(price.compareTo(BigDecimal.ZERO) > 0, "Price must be greater than zero");
+        Assert.isTrue(preparationTime > 0, "Preperationtime must be greater than zero");
+
         this.id = DishId.create();
         this.name = name;
         this.description = description;

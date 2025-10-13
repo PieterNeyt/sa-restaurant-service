@@ -6,33 +6,38 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQTopology {
-
-    public static final String DEMO_EXCHANGE_NAME = "demo-exchange";
-    public static final String HELLO_QUEUE_NAME = "hello-queue";
-    public static final String SOMETHING_QUEUE_NAME = "something-queue";
+    public static final String EXCHANGE_NAME = "orders-topic-exchange";
+    public static final String RESTAURANT_QUEUE = "restaurant.orders.queue";
+    public static final String ORDER_RESPONSE_QUEUE = "order.response.queue";
 
     @Bean
-    TopicExchange demoExchange() {
-        return new TopicExchange(DEMO_EXCHANGE_NAME);
+    TopicExchange ordersExchange() {
+        return new TopicExchange(EXCHANGE_NAME);
     }
 
     @Bean
-    Queue helloQueue() {
-        return QueueBuilder.nonDurable(HELLO_QUEUE_NAME).build();
+    Queue restaurantQueue() {
+        return QueueBuilder.durable(RESTAURANT_QUEUE).build();
     }
 
     @Bean
-    Queue somethingQueue() {
-        return QueueBuilder.nonDurable(SOMETHING_QUEUE_NAME).build();
+    Queue orderResponseQueue() {
+        return QueueBuilder.durable(ORDER_RESPONSE_QUEUE)
+                .withArgument("x-message-ttl", 300_000)
+                .build();
     }
 
     @Bean
-    Binding helloQueueToDemoExchangeBinding() {
-        return BindingBuilder.bind(helloQueue()).to(demoExchange()).with("say.hello.*");
+    Binding restaurantQueueBinding() {
+        return BindingBuilder.bind(restaurantQueue())
+                .to(ordersExchange())
+                .with("order.placed");
     }
 
     @Bean
-    Binding somethingQueueToDemoExchangeBinding() {
-        return BindingBuilder.bind(somethingQueue()).to(demoExchange()).with("say.something.*");
+    Binding orderResponseQueueBinding() {
+        return BindingBuilder.bind(orderResponseQueue())
+                .to(ordersExchange())
+                .with("order.response.*");
     }
 }
