@@ -49,7 +49,7 @@ class RestaurantControllerTest {
     private ScheduledRestaurantChangeService scheduledDishChangeService;
 
     @MockitoBean
-    private CheckoutService checkoutService;  // Mock ook deze dependency
+    private CheckoutService checkoutService;
 
     @Autowired
     private ObjectMapper objectMapper;

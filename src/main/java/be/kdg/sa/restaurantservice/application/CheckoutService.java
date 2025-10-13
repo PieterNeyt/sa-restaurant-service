@@ -46,7 +46,7 @@ public class CheckoutService {
         var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
 
         if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-          throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+         // throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
         }
 
 
