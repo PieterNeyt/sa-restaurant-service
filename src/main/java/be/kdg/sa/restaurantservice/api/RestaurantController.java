@@ -37,6 +37,9 @@ public class RestaurantController {
         this.checkoutService = checkoutService;
     }
 
+    private UUID getOwnerIdFromToken(@AuthenticationPrincipal Jwt token) {
+        return UUID.fromString(token.getClaimAsString("sub"));
+    }
 
 
     @PreAuthorize("hasAuthority('owner')")
@@ -44,10 +47,10 @@ public class RestaurantController {
     public ResponseEntity<?> addRestaurant(@RequestBody RestaurantDto restaurantDto, @AuthenticationPrincipal Jwt token) {
         try {
 
-            String ownerId = token.getClaimAsString("sub");
+            UUID ownerId = getOwnerIdFromToken(token);
 
             CreateRestaurantCommand command = new CreateRestaurantCommand(
-                    UUID.fromString(ownerId),
+                    ownerId,
                     restaurantDto.addressId(),
                     restaurantDto.restaurantType(),
                     restaurantDto.name(),
@@ -106,7 +109,7 @@ public class RestaurantController {
             @PathVariable UUID restaurantId,
             @AuthenticationPrincipal Jwt token
     ) {
-        UUID ownerId = UUID.fromString(token.getClaimAsString("sub"));
+        UUID ownerId = getOwnerIdFromToken(token);
         restaurantService.updateOpenState(restaurantId, ownerId);
         return ResponseEntity.ok().build();
     }
@@ -123,7 +126,7 @@ public class RestaurantController {
             @RequestParam UUID restaurantId,
             @AuthenticationPrincipal Jwt token
     ) {
-        UUID ownerId = UUID.fromString(token.getClaimAsString("sub"));
+        UUID ownerId = getOwnerIdFromToken(token);
         scheduledDishChangeService.applyAllPendingChanges(ownerId, restaurantId);
         return ResponseEntity.ok().build();
     }
@@ -134,7 +137,7 @@ public class RestaurantController {
             @PathVariable UUID restaurantId,
             @AuthenticationPrincipal Jwt token
     ) {
-        UUID ownerId = UUID.fromString(token.getClaimAsString("sub"));
+        UUID ownerId = getOwnerIdFromToken(token);
         var overview = restaurantService.getOverviewForRestaurantAndOwner(restaurantId, ownerId);
         return ResponseEntity.ok(overview);
     }
