@@ -9,7 +9,7 @@ client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username
 > {% client.global.set("access_token", response.body.access_token); %}
 
 ### Restaurant toevoegen (met JWT!)
-POST http://localhost:8080/api/restaurant/addRestaurant
+POST http://localhost:8080/api/restaurant/restaurant
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -27,7 +27,7 @@ Authorization: Bearer {{access_token}}
 
 
 ### 2. Dish toevoegen (restaurantId automatisch ingevuld)
-POST http://localhost:8080/api/restaurant/addDish
+POST http://localhost:8080/api/restaurant/dish
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -42,7 +42,7 @@ Authorization: Bearer {{access_token}}
 > {% client.global.set("dishId", response.body.id); %}
 
 ### 2.1 tweede Dish toevoegen (restaurantId automatisch ingevuld)
-POST http://localhost:8080/api/restaurant/addDish
+POST http://localhost:8080/api/restaurant/dish
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

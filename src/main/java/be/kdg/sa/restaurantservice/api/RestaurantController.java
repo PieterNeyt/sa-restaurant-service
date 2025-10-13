@@ -44,8 +44,8 @@ public class RestaurantController {
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }
 
-    @PostMapping()
     @PreAuthorize("hasAuthority('owner')")
+    @PostMapping("/restaurant")
     public ResponseEntity<?> addRestaurant(@RequestBody RestaurantDto restaurantDto, @AuthenticationPrincipal Jwt token) {
 
             UUID ownerId = getOwnerIdFromToken(token);
@@ -69,17 +69,9 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurants.stream().map(GetAllRestaurantDto::from).toList());
     }
 
-    @PutMapping("/{id}/changeOpenState")
-    public ResponseEntity<Void> changeOpenState(
-            @PathVariable("id") UUID restaurantId,
-            @RequestParam("ownerId") UUID ownerId
-    ) {
-        restaurantService.updateOpenState(restaurantId, ownerId);
-        return ResponseEntity.ok().build();
-    }
 
-    @PostMapping("/dish")
     @PreAuthorize("hasAuthority('owner')")
+    @PostMapping("/dish")
     public ResponseEntity<RestaurantDto.DishDto> addDish(@RequestBody DishDto dishDto) {
         CreateDishCommand command = new CreateDishCommand(
                 dishDto.RestaurantId(),
@@ -100,8 +92,8 @@ public class RestaurantController {
         return ResponseEntity.ok(DishDto.from(dish,restaurant.getId().id()));
     }
 
-    @PutMapping("/dish/{id}/state")
     @PreAuthorize("hasAuthority('owner')")
+    @PutMapping("/dish/{id}/state")
     public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {
 
         Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
@@ -117,9 +109,9 @@ public class RestaurantController {
         return ResponseEntity.ok().build();
     }
     @PreAuthorize("hasAuthority('owner')")
-    @PutMapping("/{restaurantId}/changeOpenState")
+    @PutMapping("/{id}/changeOpenState")
     public ResponseEntity<Void> changeOpenState(
-            @PathVariable UUID restaurantId,
+            @PathVariable("id") UUID restaurantId,
             @AuthenticationPrincipal Jwt token
     ) {
         UUID ownerId = getOwnerIdFromToken(token);
@@ -133,6 +125,8 @@ public class RestaurantController {
         scheduledDishChangeService.scheduleDishChange(request);
         return ResponseEntity.ok().build();
     }
+
+
     @PreAuthorize("hasAuthority('owner')")
     @PostMapping("/applyAllScheduledChangesForRestaurant")
     public ResponseEntity<Void> applyAllScheduledChanges(
