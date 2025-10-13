@@ -1,9 +1,9 @@
 package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
-import be.kdg.sa.restaurantservice.domain.restaurant.DishId;
-import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
-import be.kdg.sa.restaurantservice.domain.restaurant.ScheduledDishChange;
-import be.kdg.sa.restaurantservice.domain.restaurant.ScheduledDishChangeId;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
+import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;
+import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChangeId;
 import jakarta.persistence.*;
 import lombok.Getter;
 

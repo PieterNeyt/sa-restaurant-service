@@ -2,6 +2,9 @@ package be.kdg.sa.restaurantservice.domain.restaurant;
 
 import be.kdg.sa.restaurantservice.domain.address.AddressId;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.springframework.util.Assert;
@@ -15,12 +18,14 @@ import java.util.*;
 public class Restaurant {
     private final RestaurantId id;
     private final OwnerId ownerId;
-
     private final AddressId addressId;
+
     private final RestaurantType type;
+
     private final String name;
     private final String email;
     private final String logo;
+
     private final List<Dish> dishes = new ArrayList<>();
     private final List<OpeningHour> openingHours = new ArrayList<>();
 
@@ -45,7 +50,7 @@ public class Restaurant {
         this.email = email;
         this.logo = logo;
         this.isOpen = false;
-        this.priceCategory = PriceCategory.CHEAP; // default cheap
+        this.priceCategory = PriceCategory.CHEAP;
     }
 
     public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId,
@@ -87,7 +92,8 @@ public class Restaurant {
 
     public void updateDishState(UUID dishId, DishState state) {
         //get Dish
-        Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst().orElseThrow();
+        Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst()
+                .orElseThrow();//TODO : notfound exception toevoegen
 
         if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
             throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
@@ -144,8 +150,9 @@ public class Restaurant {
                 });
         updatePriceCategory();
     }
+    public OpeningHour addOpeningHour(DayOfWeek dayOfWeek, LocalTime openingTime, LocalTime closingTime) {
+        OpeningHour openingHour = new OpeningHour(dayOfWeek, openingTime, closingTime);
 
-    public void addOpeningHour(OpeningHour openingHour) {
         Optional<OpeningHour> existing = openingHours.stream()
                 .filter(o -> o.getDayOfWeek() == openingHour.getDayOfWeek())
                 .findFirst();
@@ -153,15 +160,12 @@ public class Restaurant {
         if (existing.isPresent()) throw new IllegalArgumentException("Opening hours for this day already exist");
 
         openingHours.add(openingHour);
+        return openingHour;
     }
 
-    public void changeOpeningStatus(){
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
-        DayOfWeek today = now.getDayOfWeek();
-        LocalTime currentTime = now.toLocalTime();
-
-        this.isOpen = openingHours.stream()
-                .filter(o -> o.getDayOfWeek() == today)
-                .anyMatch(o -> o.isOpenAt(currentTime));
+    public void isOwner(UUID ownerId) {
+        if (!this.ownerId.id().equals(ownerId)) {
+            throw new SecurityException("Not allowed to view changes for this restaurant");
+        }
     }
 }

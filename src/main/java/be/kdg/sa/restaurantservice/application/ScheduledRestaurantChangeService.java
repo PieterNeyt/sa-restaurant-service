@@ -2,6 +2,9 @@ package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.api.RestaurantDto;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
+import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;
+import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChangeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,12 +15,10 @@ import java.util.UUID;
 @Transactional
 public class ScheduledRestaurantChangeService {
     private final ScheduledDishChangeRepository scheduledRepo;
-    private final DishRepository dishRepo;
     private final RestaurantRepository restRepo;
 
-    public ScheduledRestaurantChangeService(ScheduledDishChangeRepository scheduledRepo, DishRepository dishRepo, RestaurantRepository restRepo) {
+    public ScheduledRestaurantChangeService(ScheduledDishChangeRepository scheduledRepo, RestaurantRepository restRepo) {
         this.scheduledRepo = scheduledRepo;
-        this.dishRepo = dishRepo;
         this.restRepo = restRepo;
     }
 
@@ -30,7 +31,6 @@ public class ScheduledRestaurantChangeService {
                 request.targetDescription(),
                 request.targetPrice(),
                 request.targetPreparationTime()
-
         );
         scheduledRepo.save(change);
     }

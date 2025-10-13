@@ -3,15 +3,14 @@ package be.kdg.sa.restaurantservice.application;
 import be.kdg.sa.restaurantservice.api.CheckoutRequestDto;
 import be.kdg.sa.restaurantservice.api.CheckoutResponseDto;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
-import be.kdg.sa.restaurantservice.domain.restaurant.DishState;
+import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -24,7 +23,7 @@ public class CheckoutService {
     }
 
     public CheckoutResponseDto prepareCheckout(CheckoutRequestDto checkoutRequest) {
-        var restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
+        Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
 
         if (restaurant == null) {
             throw new NotFoundException("Restaurant niet gevonden");
@@ -60,7 +59,7 @@ public class CheckoutService {
 
 
         for (var item : checkoutRequest.items()) {
-            var restaurant = restaurantService.GetRestaurantWothDishFromDish(item.dishId());
+            var restaurant = restaurantService.GetRestaurantWithDishFromDish(item.dishId());
             var dish = restaurant.getDishes().stream()
                     .filter(d -> d.getId().id().equals(item.dishId()))
                     .findFirst()

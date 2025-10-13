@@ -4,6 +4,9 @@ import be.kdg.sa.restaurantservice.api.RestaurantDto;
 import be.kdg.sa.restaurantservice.domain.address.AddressId;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
+import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
+import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChangeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +34,11 @@ public class RestaurantService {
         //maak nieuw restaurant aan
         Restaurant restaurant = new Restaurant(
                 new OwnerId(restaurantCommand.ownerId()),
-                new AddressId(restaurantCommand.addressId()),restaurantCommand.restaurantType(),restaurantCommand.name(),
-                restaurantCommand.email(),restaurantCommand.logo());
+                new AddressId(restaurantCommand.addressId()),
+                restaurantCommand.restaurantType(),
+                restaurantCommand.name(),
+                restaurantCommand.email(),
+                restaurantCommand.logo());
 
         //slaag deze op
         restaurantRepository.save(restaurant);
@@ -43,10 +49,17 @@ public class RestaurantService {
     public Dish createDish(CreateDishCommand command) {
         Dish dish = new Dish(command.name(),command.description(),command.price(),command.preparationTime());
 
+        //TODO not found toevoegen
         Restaurant restaurant =  restaurantRepository.findById(command.restaurantId())
                 .orElseThrow();
 
-        restaurant.addDish(dish.getId().id(),dish.getDescription(),dish.getName(),dish.getState(),dish.getPrice(),dish.getPreparationTime());
+        restaurant.addDish(
+                dish.getId().id(),
+                dish.getDescription(),
+                dish.getName(),
+                dish.getState(),
+                dish.getPrice(),
+                dish.getPreparationTime());
 
         restaurantRepository.save(restaurant);
         return dish;
@@ -67,9 +80,7 @@ public class RestaurantService {
         var restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
 
-        if (!restaurant.getOwnerId().id().equals(ownerId)) {
-            throw new SecurityException("Not allowed to view changes for this restaurant");
-        }
+        restaurant.isOwner(ownerId);
 
         // pending changes ophalen
         var pendingChanges = scheduledRepo.findDueChangesByRestaurantAndOwner(restaurantId, ownerId);
@@ -78,14 +89,17 @@ public class RestaurantService {
     }
 
     public OpeningHour addOpenhours(UUID restaurantId, LocalTime closingTime, LocalTime openingTime, DayOfWeek dayOfWeek) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
-        OpeningHour openingHour = new OpeningHour(dayOfWeek,openingTime,closingTime);
-        restaurant.addOpeningHour(openingHour);
+        Restaurant restaurant = restaurantRepository
+                .findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+
+        OpeningHour openingHour = restaurant.addOpeningHour(dayOfWeek,openingTime,closingTime);
         restaurantRepository.save(restaurant);
         return openingHour;
     }
 
-    public List<Restaurant> getAllRestaurants() {
+    /*TODO vragen of dit wel mag omda we wel al de restaurants nodig hebben, miss maken da we alleen de eerste 10 openemen
+    */public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
     }
 
@@ -93,7 +107,7 @@ public class RestaurantService {
         return restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
     }
 
-    public Restaurant GetRestaurantWothDishFromDish(UUID id) {
+    public Restaurant GetRestaurantWithDishFromDish(UUID id) {
         return restaurantRepository.findRestaurantFromDishId(id).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
     }
 }

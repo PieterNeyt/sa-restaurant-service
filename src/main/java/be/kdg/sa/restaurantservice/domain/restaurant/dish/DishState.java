@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.domain.restaurant;
+package be.kdg.sa.restaurantservice.domain.restaurant.dish;
 
 public enum DishState {
     PUBLISHED,

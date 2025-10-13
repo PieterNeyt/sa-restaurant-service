@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.ToString;
 import org.jmolecules.ddd.annotation.Entity;
 
+
+//TODO : hier een value object van maken een address kan toch ni zomaar bestaan?
 @Entity
 @Getter
 @ToString
