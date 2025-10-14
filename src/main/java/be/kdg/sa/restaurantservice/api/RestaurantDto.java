@@ -112,10 +112,4 @@ public record RestaurantDto(UUID id,
             );
         }
     }
-
-
-
-
-
-
 }

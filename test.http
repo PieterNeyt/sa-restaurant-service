@@ -1,11 +1,19 @@
 @ownerId = 550e8400-e29b-41d4-a716-446655440000
 
-### 1. Restaurant toevoegen
-POST http://localhost:8080/api/restaurant/addRestaurant
+### Eerst token ophalen
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
+
+> {% client.global.set("access_token", response.body.access_token); %}
+
+### Restaurant toevoegen (met JWT!)
+POST http://localhost:8080/api/restaurant/restaurant
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
-  "ownerId": "{{ownerId}}",
   "addressId": "b12d5c1a-3d1f-4b8f-9f9a-11a2b3c4d5e6",
   "restaurantType": "BUFFET",
   "name": "La Bella",
@@ -14,12 +22,14 @@ Content-Type: application/json
   "dishes": []
 }
 
+
 > {% client.global.set("restaurantId", response.body.id); %}
 
 
 ### 2. Dish toevoegen (restaurantId automatisch ingevuld)
-POST http://localhost:8080/api/restaurant/addDish
+POST http://localhost:8080/api/restaurant/dish
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "RestaurantId": "{{restaurantId}}",
@@ -32,8 +42,9 @@ Content-Type: application/json
 > {% client.global.set("dishId", response.body.id); %}
 
 ### 2.1 tweede Dish toevoegen (restaurantId automatisch ingevuld)
-POST http://localhost:8080/api/restaurant/addDish
+POST http://localhost:8080/api/restaurant/dish
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "RestaurantId": "{{restaurantId}}",
@@ -50,17 +61,20 @@ Content-Type: application/json
 ### 3. Dish status veranderen (dishId automatisch gebruikt)
 PUT http://localhost:8080/api/restaurant/changeStateDish/{{dishId}}
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 "PUBLISHED"
 
 
 ### 4. Restaurant openen of sluiten
-PUT http://localhost:8080/api/restaurant/{{restaurantId}}/changeOpenState?ownerId={{ownerId}}
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/changeOpenState
+Authorization: Bearer {{access_token}}
 
 
 ### 5. Schedule een dish change (bv. naar NOT_PUBLISHED over 2 minuten)
 POST http://localhost:8080/api/restaurant/scheduleDishChange
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "dishId": "{{dishId}}",
@@ -75,6 +89,7 @@ Content-Type: application/json
 ### 5.1 Schedule een tweede dish change (bv. naar NOT_PUBLISHED over 2 minuten)
 POST http://localhost:8080/api/restaurant/scheduleDishChange
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "dishId": "{{dishId2}}",
@@ -88,22 +103,37 @@ Content-Type: application/json
 
 
 ### 6. Voer alle geschedulde dish changes uit
+POST http://localhost:8080/api/restaurant/applyAllScheduledChangesForRestaurant?restaurantId={{restaurantId}}
+Authorization: Bearer {{access_token}}
 
-POST http://localhost:8080/api/restaurant/applyAllScheduledChangesForRestaurant?ownerId={{ownerId}}&restaurantId={{restaurantId}}
-Content-Type: application/json
-
-### 7. Haal overzicht op van alle gerechten en geplande weizegingen van een restaurant als owner
-
-GET http://localhost:8080/api/restaurant/{{restaurantId}}/changesOverview?ownerId={{ownerId}}
-Accept: application/json
+### 7. Haal overzicht op
+GET http://localhost:8080/api/restaurant/{{restaurantId}}/changesOverview
+Authorization: Bearer {{access_token}}
 
 ### Voeg een opening hour toe aan een restaurant
 POST http://localhost:8080/api/restaurant/{{restaurantId}}/openinghour
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "dayOfWeek": "MONDAY",
   "openingTime": "09:00",
   "closingTime": "17:00"
 }
+
+###
+
+
+
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
+
+#####
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token/introspect HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&token=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1aV9JaWFVUnVXbTI3YjVJZ2piTkFTdzRWS3V4N0xjMU1uUE9xTUpObXk0In0.eyJleHAiOjE3NjAwMjE1MTIsImlhdCI6MTc2MDAyMTIxMiwianRpIjoib25ydHJvOjYxYTYxZWE4LTdmZmMtMGI2My1lZTAzLThkODE2ZDU4NWRiYSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODE4MC9yZWFsbXMva2VlcGRpc2hlc2dvaW5nIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Ijc2NWQ5NWMzLTFkYjQtNGRiYi1iMjc2LWQ5ZGI1MzcxOWMzYiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImJhY2tlbmQtY2xpZW50Iiwic2lkIjoiYTBlM2I1NjctYjk1Ni00OGIyLWE1NGQtZDMxMWM5NmVhMTY1IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm93bmVyIiwiZGVmYXVsdC1yb2xlcy1rZWVwZGlzaGVzZ29pbmciLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoib3duZXIgb3duZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJvd25lciIsImdpdmVuX25hbWUiOiJvd25lciIsImZhbWlseV9uYW1lIjoib3duZXIiLCJlbWFpbCI6Im93bmVyQGV4YW1wbGUuY29tIn0.AYvqMjWZ2pwInNNTXHXcVMdkXxBhjYdZPZvCTT1Lo39b6vF0PVoP3mvEvMFM3EVJLqLLkjwnHFHWbdN8uMa1Cb4jHbnHHua9ol2AEFW8UZWvHQxlLc1PZMVfF7AEwu6vBo-pIW9uhg4NjHdtEz86srXOcNN2GEAfftxuuGidPsE7p-l-WE76B-jsYT0xZ5PwqEFzwtOk-i9kXVvr6FkJ9li8BhdSt1w76N9Q1rRzxSD9IcD2KeSa_md8yBSclpvIxTBdJG2yV3D3Pzw1NEHI_7clsJ65VndeMCcufgVRiDl0dBYCp2grygSAEegCUDsp5eGKqFYj0n3IYfsZKHLBCg
+
 
