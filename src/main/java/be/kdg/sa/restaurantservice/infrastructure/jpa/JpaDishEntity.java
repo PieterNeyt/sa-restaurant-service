@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
+package be.kdg.sa.restaurantservice.infrastructure.jpa;
 
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;

@@ -1,7 +1,7 @@
 package be.kdg.sa.restaurantservice.api;
 
 import be.kdg.sa.restaurantservice.application.CheckoutService;
-import be.kdg.sa.restaurantservice.application.CreateRestaurantCommand;
+import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.RestaurantService;
 import be.kdg.sa.restaurantservice.application.ScheduledRestaurantChangeService;
 

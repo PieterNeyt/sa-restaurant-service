@@ -4,11 +4,11 @@ import be.kdg.sa.restaurantservice.api.RestaurantDto.DishDto;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.RestaurantChangesOverviewDto;
 import be.kdg.sa.restaurantservice.api.RestaurantDto.ScheduleDishChangeDto;
 import be.kdg.sa.restaurantservice.application.*;
-import be.kdg.sa.restaurantservice.domain.NotFoundException;
+import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
+import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

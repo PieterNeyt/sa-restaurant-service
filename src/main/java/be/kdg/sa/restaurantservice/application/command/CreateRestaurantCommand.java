@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.application;
+package be.kdg.sa.restaurantservice.application.command;
 
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
 

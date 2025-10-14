@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.infrastructure.restaurant.config;
+package be.kdg.sa.restaurantservice.infrastructure.config;
 
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
