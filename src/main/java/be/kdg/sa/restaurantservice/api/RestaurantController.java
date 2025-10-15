@@ -1,9 +1,6 @@
 package be.kdg.sa.restaurantservice.api;
 
-import be.kdg.sa.restaurantservice.api.dto.CheckoutRequestDto;
-import be.kdg.sa.restaurantservice.api.dto.GetAllRestaurantDto;
-import be.kdg.sa.restaurantservice.api.dto.OrderDto;
-import be.kdg.sa.restaurantservice.api.dto.RestaurantDto;
+import be.kdg.sa.restaurantservice.api.dto.*;
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.DishDto;
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.RestaurantChangesOverviewDto;
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.ScheduleDishChangeDto;
@@ -177,7 +174,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(@RequestBody CheckoutRequestDto checkoutRequest) {
+    public ResponseEntity<CheckoutResponseDto> checkout(@RequestBody CheckoutRequestDto checkoutRequest) {
         var response = checkoutService.checkout(checkoutRequest);
         return ResponseEntity.ok(response);
     }

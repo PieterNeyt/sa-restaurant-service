@@ -1,6 +1,7 @@
 package be.kdg.sa.restaurantservice.domain.order;
 
-import org.springframework.stereotype.Repository;
+
+import org.jmolecules.ddd.annotation.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +16,6 @@ public interface OrderRepository {
     Optional<Order> findByid(UUID orderId);
 
     void delete(Order order);
+
+    List<Order> findAllPendingOrders();
 }

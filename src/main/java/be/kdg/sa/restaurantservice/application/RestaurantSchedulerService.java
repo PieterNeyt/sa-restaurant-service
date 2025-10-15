@@ -1,11 +1,17 @@
 package be.kdg.sa.restaurantservice.application;
 
+import be.kdg.sa.restaurantservice.application.command.RestaurantResponse;
+import be.kdg.sa.restaurantservice.domain.order.Order;
+import be.kdg.sa.restaurantservice.domain.order.OrderRepository;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantRepository;
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChangeRepository;
+import be.kdg.sa.restaurantservice.infrastructure.config.RabbitMQTopology;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +26,8 @@ public class RestaurantSchedulerService {
 
     private final ScheduledDishChangeRepository scheduledRepo;
     private final RestaurantRepository restRepo;
+    private final OrderRepository orderRepo;
+    private final RabbitTemplate rabbitTemplate;
 
     @Scheduled(fixedRate = 60000) // elke minuut
     public void executeScheduledDishChanges() {
@@ -38,6 +46,21 @@ public class RestaurantSchedulerService {
 
             restRepo.save(restaurant);
             scheduledRepo.save(change);
+        }
+    }
+
+    @Scheduled(fixedRate = 60000) // elke minuut
+    public void executeScheduledOrderChanges() {
+        List<Order> orders = orderRepo.findAllPendingOrders();
+
+        for (Order order : orders) {
+            if(order.has5minutsPassed()){
+                order.deny("Restaurant heeft niet binnen de 5minute geantwoord");
+                rabbitTemplate.convertAndSend( RabbitMQTopology.RESPONSE_EXCHANGE_NAME,
+                        "order.response." + order.getOrderId().id(),
+                        new RestaurantResponse(order.getOrderId().id(),order.isAccepted(), order.getMessage()));
+                orderRepo.delete(order);
+            }
         }
     }
 

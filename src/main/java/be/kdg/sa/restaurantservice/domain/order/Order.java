@@ -62,4 +62,10 @@ public class Order {
             throw new RuntimeException("this order does not belong to restaurant");
         }
     }
+
+    public boolean has5minutsPassed() {
+        long currentTime = new Date().getTime();
+        long elapsedTime = currentTime - startDate.getTime();
+        return elapsedTime >= 5 * 60 * 1000;
+    }
 }
