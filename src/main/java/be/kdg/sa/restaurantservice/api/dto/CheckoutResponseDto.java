@@ -1,6 +1,5 @@
-package be.kdg.sa.restaurantservice.api;
+package be.kdg.sa.restaurantservice.api.dto;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 

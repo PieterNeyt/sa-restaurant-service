@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.application.command;
 
+import be.kdg.sa.restaurantservice.api.dto.RestaurantDto;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public record CreateRestaurantCommand(UUID ownerId,
                                       String name,
                                       String email,
                                       String logo,
-                                      List<be.kdg.sa.restaurantservice.api.RestaurantDto.DishDto> dishes) {
+                                      List<RestaurantDto.DishDto> dishes) {
 
 }
 

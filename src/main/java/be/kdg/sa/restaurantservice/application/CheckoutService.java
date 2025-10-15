@@ -1,16 +1,9 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.api.CheckoutRequestDto;
-import be.kdg.sa.restaurantservice.api.CheckoutResponseDto;
-import be.kdg.sa.restaurantservice.domain.NotFoundException;
-import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
-import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
+import be.kdg.sa.restaurantservice.api.dto.CheckoutRequestDto;
+import be.kdg.sa.restaurantservice.api.dto.CheckoutResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Service
 @Transactional

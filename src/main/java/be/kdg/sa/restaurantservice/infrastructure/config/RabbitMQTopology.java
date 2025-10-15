@@ -6,21 +6,25 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQTopology {
-    public static final String ORDER_EXCHANGE_NAME = "order-exchange";
     public static final String ORDER_QUEUE_NAME = "order-queue";
 
+    public static final String RESPONSE_EXCHANGE_NAME = "restaurant-response-exchange";
+    public static final String RESPONSE_QUEUE_NAME = "restaurant-response-queue";
+
     @Bean
-    public TopicExchange orderExchange() {
-        return new TopicExchange(ORDER_EXCHANGE_NAME);
+    public TopicExchange responseExchange() {
+        return new TopicExchange(RESPONSE_EXCHANGE_NAME);
     }
 
     @Bean
-    public Queue orderQueue() {
-        return QueueBuilder.nonDurable(ORDER_QUEUE_NAME).build();
+    public Queue responseQueue() {
+        return QueueBuilder.nonDurable(RESPONSE_QUEUE_NAME).build();
     }
 
     @Bean
-    public Binding orderQueueBinding() {
-        return BindingBuilder.bind(orderQueue()).to(orderExchange()).with("order.place.*");
+    public Binding responseQueueBinding() {
+        return BindingBuilder.bind(responseQueue())
+                .to(responseExchange())
+                .with("order.response.*");
     }
 }

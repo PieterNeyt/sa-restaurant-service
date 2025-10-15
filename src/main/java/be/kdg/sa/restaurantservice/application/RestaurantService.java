@@ -1,6 +1,6 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.api.RestaurantDto;
+import be.kdg.sa.restaurantservice.api.dto.RestaurantDto;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.domain.address.AddressId;
@@ -100,8 +100,7 @@ public class RestaurantService {
         return openingHour;
     }
 
-    /*TODO vragen of dit wel mag omda we wel al de restaurants nodig hebben, miss maken da we alleen de eerste 10 openemen
-    */public List<Restaurant> getAllRestaurants() {
+    public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
     }
 

@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -23,6 +24,7 @@ public class Order {
         this.orderId = orderId;
         this.restaurantId = restaurantId;
         this.price = price;
+        this.accepted = false;
         this.startDate = Date.from(Instant.now());
     }
 
@@ -40,12 +42,24 @@ public class Order {
         this.message = message;
     }
 
-    private  void accept() {
+    public void accept() {
+        if(accepted)
+            throw new IllegalStateException("Order has already been accepted");
+
         this.accepted = true;
     }
 
-    private  void deny(String message) {
+    public void deny(String message) {
+        if(accepted)
+            throw new IllegalStateException("Order has already been accepted");
+
         setMessage(message);
         this.accepted = false;
+    }
+
+    public void checkRestaurant(UUID restaurantId) {
+        if(!restaurantId.equals(this.restaurantId.id())) {
+            throw new RuntimeException("this order does not belong to restaurant");
+        }
     }
 }
