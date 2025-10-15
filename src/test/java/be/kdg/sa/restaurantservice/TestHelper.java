@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice;
 
+import be.kdg.sa.restaurantservice.domain.restaurant.PriceCategory;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantEntity;
@@ -16,7 +17,7 @@ public class TestHelper {
     private JpaRestaurantRepository jpaRestaurantRepository;
 
     public Restaurant saveRestaurent() {
-        JpaRestaurantEntity restaurantEntity = new JpaRestaurantEntity(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"dominos","dominos@mail.com","logo.png", RestaurantType.PIZZERIA);
+        JpaRestaurantEntity restaurantEntity = new JpaRestaurantEntity(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"dominos","dominos@mail.com","logo.png", RestaurantType.PIZZERIA, PriceCategory.NORMAL);
         jpaRestaurantRepository.save(restaurantEntity);
         return restaurantEntity.toDomain();
     }

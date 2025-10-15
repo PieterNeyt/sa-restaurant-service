@@ -15,7 +15,7 @@ public interface ScheduledDishChangeRepository {
 
     List<ScheduledDishChange> findDueChanges(LocalDateTime now);
     void delete(ScheduledDishChange change);
-
+    void deleteAll();
 
     List<ScheduledDishChange> findDueChangesByRestaurantAndOwner(UUID restaurantId, UUID ownerId);
 
