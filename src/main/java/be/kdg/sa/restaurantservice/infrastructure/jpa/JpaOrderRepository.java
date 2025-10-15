@@ -13,6 +13,6 @@ public interface JpaOrderRepository extends JpaRepository<JpaOrderEntity, UUID> 
     @Query("SELECT jpo FROM JpaOrderEntity jpo WHERE jpo.restaurantId = :restaurantId")
     List<JpaOrderEntity> findOrdersByRestaurantId(@Param("restaurantId") UUID restaurantId);
 
-    @Query("SELECT jpo FROM JpaOrderEntity jpo WHERE jpo.isAccepted = false")
+    @Query("SELECT jpo FROM JpaOrderEntity jpo WHERE jpo.status = 'PENDING'")
     List<JpaOrderEntity> findAllPendingOrders();
 }

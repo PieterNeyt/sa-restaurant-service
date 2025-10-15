@@ -18,23 +18,23 @@ public class Order {
     private final BigDecimal price;
     private final Date startDate;
     private String message;
-    private boolean accepted;
+    private OrderStatus status;
 
     public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price) {
         this.orderId = orderId;
         this.restaurantId = restaurantId;
         this.price = price;
-        this.accepted = false;
+        this.status = OrderStatus.PENDING;
         this.startDate = Date.from(Instant.now());
     }
 
-    public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price, Date setDate, String message, boolean accepted) {
+    public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price, Date setDate, String message, OrderStatus status) {
         this.orderId = orderId;
         this.restaurantId = restaurantId;
         this.price = price;
         this.startDate = setDate;
         this.message = message;
-        this.accepted = accepted;
+        this.status = status;
     }
 
     public void setMessage(String message) {
@@ -43,18 +43,25 @@ public class Order {
     }
 
     public void accept() {
-        if(accepted)
-            throw new IllegalStateException("Order has already been accepted");
+        if(status == OrderStatus.ACCEPTED || status == OrderStatus.READY_FOR_PICKUP)
+            throw new IllegalStateException("Order has already been accepted or is altready ready for pick up");
 
-        this.accepted = true;
+        this.status = OrderStatus.ACCEPTED;
     }
 
     public void deny(String message) {
-        if(accepted)
-            throw new IllegalStateException("Order has already been accepted");
+        if(status == OrderStatus.ACCEPTED || status == OrderStatus.READY_FOR_PICKUP)
+            throw new IllegalStateException("Order has already been accepted or is already ready for pick up");
 
         setMessage(message);
-        this.accepted = false;
+        this.status = OrderStatus.DENIED;
+    }
+
+    public void ready() {
+        if(status != OrderStatus.ACCEPTED)
+            throw new IllegalStateException("Order is not yet accepted");
+
+        this.status = OrderStatus.READY_FOR_PICKUP;
     }
 
     public void checkRestaurant(UUID restaurantId) {

@@ -46,9 +46,9 @@ public class OrderService {
         order.checkRestaurant(restaurantId);
         order.deny(message);
 
-        rabbitTemplate.convertAndSend( RabbitMQTopology.RESPONSE_EXCHANGE_NAME,
-                "order.response." + orderId,
-                new RestaurantResponse(order.getOrderId().id(),order.isAccepted(), order.getMessage()));
+        rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
+                "order.deny." + orderId,
+                new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
 
         orderRepository.delete(order);
     }
@@ -60,11 +60,25 @@ public class OrderService {
         order.checkRestaurant(restaurantId);
         order.accept();
 
-        rabbitTemplate.convertAndSend( RabbitMQTopology.RESPONSE_EXCHANGE_NAME,
-                "order.response." + orderId,
-                new RestaurantResponse(order.getOrderId().id(),order.isAccepted(), order.getMessage()));
+        rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
+                "order.accept." + orderId,
+                new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
 
         orderRepository.save(order);
 
+    }
+
+    public void orderIsReady(UUID orderId,UUID restaurantId) {
+        Order order = orderRepository.findByid(orderId)
+                .orElseThrow();
+
+        order.checkRestaurant(restaurantId);
+        order.ready();
+
+        rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
+                "order.ready." + orderId,
+                new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
+
+        orderRepository.save(order);
     }
 }

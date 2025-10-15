@@ -204,4 +204,12 @@ public class RestaurantController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('owner')")
+    @PutMapping("/{restaurantId}/order/{orderId}/ready")
+    public ResponseEntity<Void> orderIsReady(@PathVariable("orderId") UUID orderId,
+                                          @PathVariable("restaurantId") UUID restaurantId) {
+        orderService.orderIsReady(orderId,restaurantId);
+        return ResponseEntity.ok().build();
+    }
+
 }

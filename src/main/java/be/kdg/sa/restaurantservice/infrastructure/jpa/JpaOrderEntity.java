@@ -2,6 +2,7 @@ package be.kdg.sa.restaurantservice.infrastructure.jpa;
 
 import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderId;
+import be.kdg.sa.restaurantservice.domain.order.OrderStatus;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantId;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,19 +26,21 @@ public class JpaOrderEntity {
 
     @Column()
     private String message;
-    @Column()
-    private boolean isAccepted;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
 
     public JpaOrderEntity() {
     }
 
-    public JpaOrderEntity(UUID id, UUID restaurantId, BigDecimal price, Date startDate, String message, boolean isAccepted) {
+    public JpaOrderEntity(UUID id, UUID restaurantId, BigDecimal price, Date startDate, String message, OrderStatus status) {
         this.id = id;
         this.restaurantId = restaurantId;
         this.price = price;
         this.startDate = startDate;
         this.message = message;
-        this.isAccepted = isAccepted;
+        this.status = status;
     }
 
     public static JpaOrderEntity fromDomain(Order order) {
@@ -46,7 +49,7 @@ public class JpaOrderEntity {
                 order.getPrice(),
                 order.getStartDate(),
                 order.getMessage(),
-                order.isAccepted());
+                order.getStatus());
     }
 
     public Order toDomain() {
@@ -56,6 +59,6 @@ public class JpaOrderEntity {
                 price,
                 startDate,
                 message,
-                isAccepted);
+                status);
     }
 }

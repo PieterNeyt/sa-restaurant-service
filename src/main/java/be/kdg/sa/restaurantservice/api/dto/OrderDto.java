@@ -2,6 +2,7 @@ package be.kdg.sa.restaurantservice.api.dto;
 
 
 import be.kdg.sa.restaurantservice.domain.order.Order;
+import be.kdg.sa.restaurantservice.domain.order.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,7 +14,7 @@ public record OrderDto(
         BigDecimal price,
         Date startDate,
         String message,
-        boolean accepted
+        OrderStatus accepted
 ) {
     public static OrderDto fromDomain(Order order) {
         return new OrderDto(
@@ -22,7 +23,7 @@ public record OrderDto(
                 order.getPrice(),
                 order.getStartDate(),
                 order.getMessage(),
-                order.isAccepted()
+                order.getStatus()
         );
     }
 }

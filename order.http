@@ -18,9 +18,13 @@ GET http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/or
 Authorization: Bearer {{access_token}}
 
 ### Order accept
-PUT http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/order/e24ce48c-6b7b-4b93-876c-500283b93de5/accept
+PUT http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/order/4285589d-959f-46da-bd5f-b56b0b381042/accept
 Authorization: Bearer {{access_token}}
 
 ### Order deny
-PUT http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/order/35019e31-741b-40dc-9eaa-347c7dae7367/deny
+PUT http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/order/4285589d-959f-46da-bd5f-b56b0b381042/deny
 Authorization: Bearer {{access_token}}
+
+{
+    message:"lol"
+}

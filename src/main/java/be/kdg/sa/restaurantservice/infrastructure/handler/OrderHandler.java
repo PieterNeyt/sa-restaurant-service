@@ -13,7 +13,7 @@ public class OrderHandler {
         this.orderService = orderService;
     }
 
-    @RabbitListener(queues = RabbitMQTopology.ORDER_QUEUE_NAME)
+    @RabbitListener(queues = RabbitMQTopology.RESTAURANT_ORDER_QUEUE)
     public void receiveOrder(OrderMessage msg) {
         orderService.processIncomingOrder(msg);
     }

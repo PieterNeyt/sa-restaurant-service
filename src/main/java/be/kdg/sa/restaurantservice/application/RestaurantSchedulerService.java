@@ -54,11 +54,14 @@ public class RestaurantSchedulerService {
         List<Order> orders = orderRepo.findAllPendingOrders();
 
         for (Order order : orders) {
+
             if(order.has5minutsPassed()){
-                order.deny("Restaurant heeft niet binnen de 5minute geantwoord");
-                rabbitTemplate.convertAndSend( RabbitMQTopology.RESPONSE_EXCHANGE_NAME,
+                order.deny("Restaurant heeft niet binnen de 5 minute geantwoord");
+
+                rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
                         "order.response." + order.getOrderId().id(),
-                        new RestaurantResponse(order.getOrderId().id(),order.isAccepted(), order.getMessage()));
+                        new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
+
                 orderRepo.delete(order);
             }
         }

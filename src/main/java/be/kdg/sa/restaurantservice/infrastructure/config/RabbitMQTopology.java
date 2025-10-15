@@ -6,25 +6,33 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQTopology {
-    public static final String ORDER_QUEUE_NAME = "order-queue";
+    public static final String ORDER_EXCHANGE_NAME = "order-exchange";
+    public static final String RESTAURANT_RESPONSE_EXCHANGE_NAME = "restaurant-response-exchange";
 
-    public static final String RESPONSE_EXCHANGE_NAME = "restaurant-response-exchange";
-    public static final String RESPONSE_QUEUE_NAME = "restaurant-response-queue";
+    public static final String DELIVERY_EXCHANGE_NAME = "delivery-exchange";
+    public static final String RESTAURANT_ORDER_QUEUE = "restaurant-order-queue";
 
+    //ontvanget bestellingen
     @Bean
-    public TopicExchange responseExchange() {
-        return new TopicExchange(RESPONSE_EXCHANGE_NAME);
+    Queue restaurantOrderQueue() {
+        return QueueBuilder.nonDurable(RESTAURANT_ORDER_QUEUE).build();
+    }
+
+    //alles wat binnenkomt van order topic exange opvangen en routen naar de restaurant order que bij key van order.place
+    @Bean
+    Binding orderBinding(Queue restaurantOrderQueue) {
+        return BindingBuilder.bind(restaurantOrderQueue)
+                .to(new TopicExchange(ORDER_EXCHANGE_NAME))
+                .with("order.place.*");
     }
 
     @Bean
-    public Queue responseQueue() {
-        return QueueBuilder.nonDurable(RESPONSE_QUEUE_NAME).build();
+    TopicExchange restaurantResponseExchange() {
+        return new TopicExchange(RESTAURANT_RESPONSE_EXCHANGE_NAME, true, false);
     }
 
     @Bean
-    public Binding responseQueueBinding() {
-        return BindingBuilder.bind(responseQueue())
-                .to(responseExchange())
-                .with("order.response.*");
+    TopicExchange deliveryExchange() {
+        return new TopicExchange(DELIVERY_EXCHANGE_NAME, true, false);
     }
 }
