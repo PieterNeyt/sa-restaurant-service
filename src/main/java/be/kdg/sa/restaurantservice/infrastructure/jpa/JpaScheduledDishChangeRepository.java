@@ -1,16 +1,12 @@
-package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
+package be.kdg.sa.restaurantservice.infrastructure.jpa;
 
-import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
-import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
 import org.jmolecules.ddd.annotation.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository

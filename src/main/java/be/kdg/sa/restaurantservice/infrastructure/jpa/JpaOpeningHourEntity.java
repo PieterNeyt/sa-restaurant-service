@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
+package be.kdg.sa.restaurantservice.infrastructure.jpa;
 
 import be.kdg.sa.restaurantservice.domain.restaurant.OpeningHour;
 import jakarta.persistence.Column;
@@ -6,7 +6,6 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
-import org.jmolecules.ddd.annotation.ValueObject;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;

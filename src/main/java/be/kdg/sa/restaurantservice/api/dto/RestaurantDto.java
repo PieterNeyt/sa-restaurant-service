@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.api;
+package be.kdg.sa.restaurantservice.api.dto;
 
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;

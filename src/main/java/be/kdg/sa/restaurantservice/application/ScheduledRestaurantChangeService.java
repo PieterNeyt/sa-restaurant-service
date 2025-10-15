@@ -1,6 +1,6 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.api.RestaurantDto;
+import be.kdg.sa.restaurantservice.api.dto.RestaurantDto;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;

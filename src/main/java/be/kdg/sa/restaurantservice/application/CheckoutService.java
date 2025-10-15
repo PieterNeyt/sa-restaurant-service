@@ -1,16 +1,9 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.api.CheckoutRequestDto;
-import be.kdg.sa.restaurantservice.api.CheckoutResponseDto;
-import be.kdg.sa.restaurantservice.domain.NotFoundException;
-import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
-import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
+import be.kdg.sa.restaurantservice.api.dto.CheckoutRequestDto;
+import be.kdg.sa.restaurantservice.api.dto.CheckoutResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Service
 @Transactional
@@ -21,9 +14,9 @@ public class CheckoutService {
     public CheckoutService(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
     }
-
+    //TODO: later uncommente
     public CheckoutResponseDto prepareCheckout(CheckoutRequestDto checkoutRequest) {
-        Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
+      /*  Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
 
         if (restaurant == null) {
             throw new NotFoundException("Restaurant niet gevonden");
@@ -45,8 +38,8 @@ public class CheckoutService {
         var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
 
         if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-         // throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
-        }
+          throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+        }*/
 
 
         return new CheckoutResponseDto(checkoutRequest.orderId(), true, "Checkout voorbereid");
@@ -54,7 +47,7 @@ public class CheckoutService {
 
 
     public CheckoutResponseDto checkout(CheckoutRequestDto checkoutRequest) {
-
+        /*
         prepareCheckout(checkoutRequest);
 
 
@@ -80,7 +73,7 @@ public class CheckoutService {
             if (dish.getState() != DishState.PUBLISHED) {
                 throw new IllegalStateException("Dish " + dish.getName() + " is niet beschikbaar.");
             }
-        }
+        }*/
 
         return new CheckoutResponseDto(checkoutRequest.orderId(), true, "Checkout succesvol");
     }
