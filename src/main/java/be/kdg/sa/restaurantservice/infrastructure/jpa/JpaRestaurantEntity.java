@@ -6,6 +6,7 @@ import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,16 +41,16 @@ public class JpaRestaurantEntity {
 
 
     @OneToMany(mappedBy = "restaurant",cascade = CascadeType.ALL ,fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<JpaDishEntity> dishes;
+    private List<JpaDishEntity> dishes= new ArrayList<>();;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "restaurant_opening_hours", joinColumns = @JoinColumn(name = "restaurant_id"))
-    private List<JpaOpeningHourEntity> openingHours;
+    private List<JpaOpeningHourEntity> openingHours= new ArrayList<>();;
 
 
     protected JpaRestaurantEntity() {}
 
-    public JpaRestaurantEntity(UUID id, UUID ownerId,UUID addresId, String name,String email, String logo, RestaurantType type) {
+    public JpaRestaurantEntity(UUID id, UUID ownerId,UUID addresId, String name,String email, String logo, RestaurantType type, PriceCategory priceCategory) {
         this.id = id;
         this.ownerId = ownerId;
         this.name = name;
@@ -58,6 +59,7 @@ public class JpaRestaurantEntity {
         this.email = email;
         this.addresId=addresId;
         this.isOpen = false;
+        this.priceCategory = priceCategory;
     }
 
     public static JpaRestaurantEntity fromDomain(Restaurant restaurant) {
@@ -68,7 +70,8 @@ public class JpaRestaurantEntity {
                 restaurant.getName(),
                 restaurant.getEmail(),
                 restaurant.getLogo(),
-                restaurant.getType());
+                restaurant.getType(),
+                restaurant.getPriceCategory());
         jpaRestaurantEntity.isOpen = restaurant.isOpen();
         jpaRestaurantEntity.priceCategory = restaurant.getPriceCategory();
 

@@ -168,4 +168,8 @@ public class Restaurant {
             throw new SecurityException("Not allowed to view changes for this restaurant");
         }
     }
+
+    public RestaurantType getRestaurantType() {
+        return this.type;
+    }
 }

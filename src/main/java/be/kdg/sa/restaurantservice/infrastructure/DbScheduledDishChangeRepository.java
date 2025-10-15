@@ -36,6 +36,11 @@ public class DbScheduledDishChangeRepository implements ScheduledDishChangeRepos
         jpaRepo.deleteById(change.getId().id());
     }
 
+    @Override
+    public void deleteAll() {
+        jpaRepo.deleteAll();
+    }
+
 
 
     @Override
