@@ -39,4 +39,11 @@ public class DbOrderRepository implements OrderRepository {
     public void delete(Order order) {
         this.jpaOrderRepository.delete(JpaOrderEntity.fromDomain(order));
     }
+
+    @Override
+    public List<Order> findAllPendingOrders() {
+        return this.jpaOrderRepository.findAllPendingOrders().stream()
+                .map(JpaOrderEntity::toDomain)
+                .toList();
+    }
 }
