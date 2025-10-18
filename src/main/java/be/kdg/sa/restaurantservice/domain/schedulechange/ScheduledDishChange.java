@@ -4,6 +4,7 @@ import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 public class ScheduledDishChange {
+    @Identity
     private final ScheduledDishChangeId id;
     private final DishId dishId;
     private final LocalDateTime scheduledTime;

@@ -2,6 +2,7 @@ package be.kdg.sa.restaurantservice.domain.restaurant.dish;
 
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 public class Dish {
+    @Identity
     private final DishId id;
     private String name;
     private String description;

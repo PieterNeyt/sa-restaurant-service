@@ -7,6 +7,7 @@ import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
+import org.jmolecules.ddd.annotation.Identity;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.util.*;
 @AggregateRoot
 @Getter
 public class Restaurant {
+    @Identity
     private final RestaurantId id;
     private final OwnerId ownerId;
     private final AddressId addressId;

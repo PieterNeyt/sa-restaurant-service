@@ -2,10 +2,12 @@ package be.kdg.sa.restaurantservice.domain.owner;
 
 import be.kdg.sa.restaurantservice.domain.address.AddressId;
 import org.jmolecules.ddd.annotation.AggregateRoot;
+import org.jmolecules.ddd.annotation.Identity;
 
 
 @AggregateRoot
 public class Owner {
+    @Identity
     private final OwnerId id;
     private final String firstName;
     private final String lastName;

@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice.domain.order;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantId;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Getter
 public class Order {
+    @Identity
     private final OrderId orderId;
     private final RestaurantId restaurantId;
     private final BigDecimal price;

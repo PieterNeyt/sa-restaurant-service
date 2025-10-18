@@ -1,4 +1,4 @@
-# Zelfreflectie document - voorbeeld
+# Zelfreflectie document - 
 
 ## V1
 
