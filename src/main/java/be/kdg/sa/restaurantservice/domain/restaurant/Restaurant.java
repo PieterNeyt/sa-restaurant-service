@@ -1,6 +1,6 @@
 package be.kdg.sa.restaurantservice.domain.restaurant;
 
-import be.kdg.sa.restaurantservice.domain.address.AddressId;
+import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
@@ -20,7 +20,7 @@ public class Restaurant {
     @Identity
     private final RestaurantId id;
     private final OwnerId ownerId;
-    private final AddressId addressId;
+    private Address address;
 
     private final RestaurantType type;
 
@@ -34,9 +34,9 @@ public class Restaurant {
     private boolean isOpen;
     private PriceCategory priceCategory;
 
-    public Restaurant(OwnerId ownerId, AddressId addressId, RestaurantType type, String name, String email, String logo) {
+    public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo) {
         Assert.notNull(ownerId, "owner id must not be null");
-        Assert.notNull(addressId, "address id must not be null");
+        Assert.notNull(address, "address must not be null");
 
         Assert.hasText(name, "name must not be blank");
         Assert.hasText(email, "email must not be blank");
@@ -47,7 +47,7 @@ public class Restaurant {
         this.name = name;
         this.id = RestaurantId.create();
         this.ownerId = ownerId;
-        this.addressId = addressId;
+        this.address = address;
         this.type = type;
         this.email = email;
         this.logo = logo;
@@ -55,14 +55,14 @@ public class Restaurant {
         this.priceCategory = PriceCategory.CHEAP;
     }
 
-    public Restaurant(RestaurantId id, OwnerId ownerId, AddressId addressId,
+    public Restaurant(RestaurantId id, OwnerId ownerId, Address address,
                       RestaurantType type,
                       String name, String email, String logo,
                       boolean isOpen,
                       PriceCategory priceCategory) {
         Assert.notNull(id, "id must not be null");
         Assert.notNull(ownerId, "owner id must not be null");
-        Assert.notNull(addressId, "address id must not be null");
+        Assert.notNull(address, "address id must not be null");
 
         Assert.hasText(name, "name must not be blank");
         Assert.hasText(email, "email must not be blank");
@@ -73,7 +73,7 @@ public class Restaurant {
 
         this.id = id;
         this.ownerId = ownerId;
-        this.addressId = addressId;
+        this.address = address;
         this.name = name;
         this.email = email;
         this.logo = logo;

@@ -1,6 +1,5 @@
 package be.kdg.sa.restaurantservice.infrastructure.jpa;
 
-import be.kdg.sa.restaurantservice.domain.address.AddressId;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import jakarta.persistence.*;
@@ -19,8 +18,9 @@ public class JpaRestaurantEntity {
     private UUID id;
     @Column(nullable = false)
     private UUID ownerId;
-    @Column()
-    private UUID addresId;
+
+    @Embedded
+    private JpaAddressEmbeddable address;
 
 
     @Column(nullable = false)
@@ -50,14 +50,14 @@ public class JpaRestaurantEntity {
 
     protected JpaRestaurantEntity() {}
 
-    public JpaRestaurantEntity(UUID id, UUID ownerId,UUID addresId, String name,String email, String logo, RestaurantType type, PriceCategory priceCategory) {
+    public JpaRestaurantEntity(UUID id, UUID ownerId,JpaAddressEmbeddable  address, String name,String email, String logo, RestaurantType type, PriceCategory priceCategory) {
         this.id = id;
         this.ownerId = ownerId;
         this.name = name;
         this.logo = logo;
         this.type = type;
         this.email = email;
-        this.addresId=addresId;
+        this.address = address;
         this.isOpen = false;
         this.priceCategory = priceCategory;
     }
@@ -66,7 +66,7 @@ public class JpaRestaurantEntity {
         JpaRestaurantEntity jpaRestaurantEntity = new JpaRestaurantEntity(
                 restaurant.getId().id(),
                 restaurant.getOwnerId().id(),
-                restaurant.getAddressId().id(),
+                JpaAddressEmbeddable.fromDomain(restaurant.getAddress()),
                 restaurant.getName(),
                 restaurant.getEmail(),
                 restaurant.getLogo(),
@@ -96,7 +96,7 @@ public class JpaRestaurantEntity {
         Restaurant restaurant = new Restaurant(
                 new RestaurantId(id),
                 new OwnerId(ownerId),
-                new AddressId(addresId),
+                address != null ? address.toDomain() : null,
                 type,
                 name,
                 email,

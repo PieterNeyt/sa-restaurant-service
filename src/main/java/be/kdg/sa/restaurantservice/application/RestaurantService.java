@@ -3,7 +3,7 @@ package be.kdg.sa.restaurantservice.application;
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
-import be.kdg.sa.restaurantservice.domain.address.AddressId;
+import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
@@ -34,9 +34,17 @@ public class RestaurantService {
             throw new IllegalStateException("Owner already owns restaurant");
 
         //maak nieuw restaurant aan
+        Address address = new Address(
+                restaurantCommand.city(),
+                restaurantCommand.streetNumber(),
+                restaurantCommand.street(),
+                restaurantCommand.postalCode(),
+                restaurantCommand.country()
+        );
+
         Restaurant restaurant = new Restaurant(
                 new OwnerId(restaurantCommand.ownerId()),
-                new AddressId(restaurantCommand.addressId()),
+                address,
                 restaurantCommand.restaurantType(),
                 restaurantCommand.name(),
                 restaurantCommand.email(),

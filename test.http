@@ -1,32 +1,40 @@
 @ownerId = 550e8400-e29b-41d4-a716-446655440000
-#POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
-#Content-Type: application/x-www-form-urlencoded
-
-#client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
 
 ### Eerst token ophalen
 POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=backend-client&client_secret=pBAtElyMTHBp0IBEwO8G8h7bt6Jb4khZ&username=owner&password=password&grant_type=password&scope=openid
-
-
+client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
 > {% client.global.set("access_token", response.body.access_token); %}
+#### t
+#POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
+#Content-Type: application/x-www-form-urlencoded
+#
+#client_id=backend-client&client_secret=pBAtElyMTHBp0IBEwO8G8h7bt6Jb4khZ&username=owner&password=password&grant_type=password&scope=openid
+#
+#
+#> {% client.global.set("access_token", response.body.access_token); %}
 
 ### Restaurant toevoegen (met JWT!)
 POST http://localhost:8080/api/restaurant/restaurant
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
+
 {
-  "addressId": "b12d5c1a-3d1f-4b8f-9f9a-11a2b3c4d5e6",
   "restaurantType": "BUFFET",
-  "name": "La Bella",
+  "name": "La Bella Vita",
   "email": "info@labellavita.com",
   "logo": "https://example.com/logo.png",
-  "dishes": []
+  "dishes": [],
+  "address": {
+    "street": "Groenplaats",
+    "streetNumber": "42",
+    "city": "Antwerpen",
+    "postalCode": "2000",
+    "country": "Belgium"
+  }
 }
-
 
 > {% client.global.set("restaurantId", response.body.id); %}
 

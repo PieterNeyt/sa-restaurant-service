@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.api.dto;
 
+import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
@@ -12,23 +13,44 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
-public record RestaurantDto(UUID id,
-                            UUID ownerId,
-                            UUID addressId,
-                            RestaurantType restaurantType,
-                            String name,
-                            String email,
-                            String logo,
-                            List<DishDto> dishes,
-                            boolean isOpen,
-                            PriceCategory priceCategory,
-                            List<OpeningHourDto> openingHours
+public record RestaurantDto(
+        UUID id,
+        UUID ownerId,
+        AddressDto address,
+        RestaurantType restaurantType,
+        String name,
+        String email,
+        String logo,
+        List<DishDto> dishes,
+        boolean isOpen,
+        PriceCategory priceCategory,
+        List<OpeningHourDto> openingHours
 ) {
+    public record AddressDto(
+            String street,
+            String streetNumber,
+            String city,
+            String postalCode,
+            String country
+    ) {
+        public static AddressDto from(Address address) {
+            if (address == null) return null;
+            return new AddressDto(
+                    address.getStreet(),
+                    address.getStreetNumber(),
+                    address.getCity(),
+                    address.getPostalCode(),
+                    address.getCountry()
+            );
+        }
+    }
     public static RestaurantDto from(final Restaurant restaurant) {
+        Address address = restaurant.getAddress();
+
         return new RestaurantDto(
                 restaurant.getId().id(),
                 restaurant.getOwnerId().id(),
-                restaurant.getAddressId().id(),
+                AddressDto.from(restaurant.getAddress()),
                 restaurant.getType(),
                 restaurant.getName(),
                 restaurant.getEmail(),
@@ -39,8 +61,9 @@ public record RestaurantDto(UUID id,
                 restaurant.isOpen(),
                 restaurant.getPriceCategory(),
                 restaurant.getOpeningHours().stream()
-                .map(OpeningHourDto::from)
-                .toList());
+                        .map(OpeningHourDto::from)
+                        .toList()
+        );
     }
     public record DishDto(UUID id, UUID RestaurantId, String name, String description, BigDecimal price,
                           DishState dishState, int preparationTime) {

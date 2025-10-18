@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice;
 import be.kdg.sa.restaurantservice.domain.restaurant.PriceCategory;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
+import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaAddressEmbeddable;
 import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaRestaurantEntity;
 import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaRestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,26 @@ public class TestHelper {
     private JpaRestaurantRepository jpaRestaurantRepository;
 
     public Restaurant saveRestaurent() {
-        JpaRestaurantEntity restaurantEntity = new JpaRestaurantEntity(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"dominos","dominos@mail.com","logo.png", RestaurantType.PIZZERIA, PriceCategory.NORMAL);
+        JpaAddressEmbeddable address = new JpaAddressEmbeddable(
+                "Groenplaats",
+                "1",
+                "Antwerpen",
+                "2000",
+                "Belgium"
+        );
+
+
+        JpaRestaurantEntity restaurantEntity = new JpaRestaurantEntity(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                address,
+                "dominos",
+                "dominos@mail.com",
+                "logo.png",
+                RestaurantType.PIZZERIA,
+                PriceCategory.NORMAL
+        );
+
         jpaRestaurantRepository.save(restaurantEntity);
         return restaurantEntity.toDomain();
     }

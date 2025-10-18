@@ -56,18 +56,22 @@ class RestaurantServiceIntegrationTest {
     }
 
     @Test
-    void createRestaurant_shouldPersistRestaurantWithAllDetails() {
+    void createRestaurant_shouldSaveRestaurantWithAllDetails() {
         // Arrange
         UUID ownerId = UUID.randomUUID();
-        UUID addressId = UUID.randomUUID();
+
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 ownerId,
-                addressId,
                 RestaurantType.PIZZERIA,
                 "Pizza Palace",
                 "info@pizzapalace.com",
                 "palace-logo.png",
-                List.of()
+                List.of(),
+                "Antwerpen",
+                "1",
+                "Groenplaats",
+                "2000",
+                "Belgium"
         );
 
         // Act
@@ -90,15 +94,19 @@ class RestaurantServiceIntegrationTest {
     void createRestaurant_whenOwnerAlreadyOwnsRestaurant_shouldThrowException() {
         // Arrange
         UUID ownerId = UUID.randomUUID();
-        UUID addressId = UUID.randomUUID();
+
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 ownerId,
-                addressId,
                 RestaurantType.BUFFET,
                 "First Restaurant",
                 "first@test.com",
                 "logo1.png",
-                List.of()
+                List.of(),
+                "Antwerpen",
+                "1",
+                "Groenplaats",
+                "2000",
+                "Belgium"
         );
 
         // Create first restaurant
@@ -107,12 +115,16 @@ class RestaurantServiceIntegrationTest {
         // Create second command with same owner
         CreateRestaurantCommand duplicateCommand = new CreateRestaurantCommand(
                 ownerId,
-                UUID.randomUUID(),
                 RestaurantType.SEAFOOD,
                 "Second Restaurant",
                 "second@test.com",
                 "logo2.png",
-                List.of()
+                List.of(),
+                "Antwerpen",
+                "1",
+                "Groenplaats",
+                "2000",
+                "Belgium"
         );
 
         // Act & Assert
@@ -122,7 +134,7 @@ class RestaurantServiceIntegrationTest {
     }
 
     @Test
-    void createDishAndUpdateState_shouldPersistDishAndUpdateCorrectly() {
+    void createDishAndUpdateState_shouldSaveDishAndReflectStateChange(){
         // Arrange
         Restaurant restaurant = testHelper.saveRestaurent();
         CreateDishCommand dishCommand = new CreateDishCommand(
@@ -134,18 +146,18 @@ class RestaurantServiceIntegrationTest {
                 30
         );
 
-        // Act - Create dish
+        // Act
         Dish createdDish = restaurantService.createDish(dishCommand);
 
-        // Assert - Verify creation
+        // Assert
         assertThat(createdDish).isNotNull();
         assertThat(createdDish.getName()).isEqualTo("Margherita Pizza");
         assertThat(createdDish.getState()).isEqualTo(DishState.NOT_PUBLISHED);
 
-        // Act - Update state
+        // Act
         restaurantService.updateStateDish(createdDish.getId().id(), DishState.PUBLISHED);
 
-        // Assert - Verify update
+        // Assert
         Restaurant updatedRestaurant = restaurantRepository.findById(restaurant.getId().id())
                 .orElseThrow();
         Dish updatedDish = updatedRestaurant.getDishes().stream()
@@ -169,7 +181,7 @@ class RestaurantServiceIntegrationTest {
         );
         Dish dish = restaurantService.createDish(dishCommand);
 
-        // Create scheduled change in the past (so it's immediately due)
+        // Create scheduled change
         ScheduledDishChange scheduledChange = new ScheduledDishChange(
                 dish.getId(),
                 LocalDateTime.now().minusMinutes(5),
@@ -181,7 +193,7 @@ class RestaurantServiceIntegrationTest {
         );
         scheduledDishChangeRepository.save(scheduledChange);
 
-        // Act - Execute scheduler
+        // Act
         restaurantSchedulerService.executeScheduledDishChanges();
 
         // Assert
@@ -200,37 +212,41 @@ class RestaurantServiceIntegrationTest {
     }
 
     @Test
-    void addOpeningHoursAndToggleRestaurantState_shouldPersistCorrectly() {
+    void addOpeningHoursAndToggleRestaurantState_shouldSaveOpeningHoursAndAllowStateToggling() {
         // Arrange
         UUID ownerId = UUID.randomUUID();
-        UUID addressId = UUID.randomUUID();
+
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 ownerId,
-                addressId,
                 RestaurantType.PIZZERIA,
                 "Trattoria Roma",
                 "roma@test.com",
                 "roma-logo.png",
-                List.of()
+                List.of(),
+                "Antwerpen",
+                "1",
+                "Groenplaats",
+                "2000",
+                "Belgium"
         );
         Restaurant restaurant = restaurantService.createRestaurant(command);
 
-        // Act - Add opening hours
-        OpeningHour mondayHours = restaurantService.addOpenhours(
+        // Act
+         restaurantService.addOpenhours(
                 restaurant.getId().id(),
                 LocalTime.of(22, 0),
                 LocalTime.of(11, 0),
                 DayOfWeek.MONDAY
         );
 
-        OpeningHour fridayHours = restaurantService.addOpenhours(
+         restaurantService.addOpenhours(
                 restaurant.getId().id(),
                 LocalTime.of(23, 30),
                 LocalTime.of(11, 0),
                 DayOfWeek.FRIDAY
         );
 
-        // Assert - Verify opening hours
+        // Assert
         Restaurant updatedRestaurant = restaurantRepository.findById(restaurant.getId().id())
                 .orElseThrow();
         assertThat(updatedRestaurant.getOpeningHours()).hasSize(2);

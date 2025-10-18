@@ -55,12 +55,16 @@ public class RestaurantController {
         UUID ownerId = getOwnerIdFromToken(token);
         CreateRestaurantCommand command = new CreateRestaurantCommand(
                 ownerId,
-                restaurantDto.addressId(),
                 restaurantDto.restaurantType(),
                 restaurantDto.name(),
                 restaurantDto.email(),
                 restaurantDto.logo(),
-                restaurantDto.dishes()
+                restaurantDto.dishes(),
+                restaurantDto.address().city(),
+                restaurantDto.address().streetNumber(),
+                restaurantDto.address().street(),
+                restaurantDto.address().postalCode(),
+                restaurantDto.address().country()
         );
 
         Restaurant restaurant = restaurantService.createRestaurant(command);
