@@ -18,7 +18,7 @@ public class Dish {
     private DishState state;
     private int preparationTime;
 
-    public Dish(String name, String description, BigDecimal price, int preparationTime) {
+    public Dish(String name, String description, BigDecimal price, int preparationTime, DishState state) {
         Assert.notNull(price, "Price must not be null");
 
         Assert.hasText(name, "Name must not be blank");
@@ -31,7 +31,7 @@ public class Dish {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.state = DishState.NOT_PUBLISHED;
+        this.state = state;
         this.preparationTime = preparationTime;
     }
     public Dish(DishId id,DishState state, String name, String description, BigDecimal price,  int preparationTime) {

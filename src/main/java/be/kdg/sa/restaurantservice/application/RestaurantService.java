@@ -57,7 +57,7 @@ public class RestaurantService {
     }
 
     public Dish createDish(CreateDishCommand command) {
-        Dish dish = new Dish(command.name(),command.description(),command.price(),command.preparationTime());
+        Dish dish = new Dish(command.name(),command.description(),command.price(),command.preparationTime(), command.dishState());
 
         //TODO not found toevoegen
         Restaurant restaurant =  restaurantRepository.findById(command.restaurantId())

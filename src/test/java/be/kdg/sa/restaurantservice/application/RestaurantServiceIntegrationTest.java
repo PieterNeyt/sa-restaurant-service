@@ -1,6 +1,8 @@
 package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.TestHelper;
+import be.kdg.sa.restaurantservice.api.dto.CheckoutRequestDto;
+import be.kdg.sa.restaurantservice.api.dto.CheckoutResponseDto;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -45,6 +48,8 @@ class RestaurantServiceIntegrationTest {
 
     @Autowired
     private ScheduledRestaurantChangeService scheduledRestaurantChangeService;
+    @Autowired
+    private CheckoutService checkoutService;
 
     @Autowired
     private TestHelper testHelper;
@@ -269,5 +274,93 @@ class RestaurantServiceIntegrationTest {
         Restaurant reToggledRestaurant = restaurantRepository.findById(restaurant.getId().id())
                 .orElseThrow();
         assertThat(reToggledRestaurant.isOpen()).isEqualTo(initialState);
+    }
+    @Test
+    void getOverviewForRestaurantAndOwner_shouldReturnOverviewWithPendingChanges() {
+        // Arrange
+        Restaurant restaurant = testHelper.saveRestaurent();
+        UUID ownerId = restaurant.getOwnerId().id();
+
+        // Maak een gerecht aan
+        var dishCommand = new CreateDishCommand(
+                restaurant.getId().id(),
+                "Test Pizza",
+                "Lekker testgerecht",
+                new BigDecimal("9.99"),
+                DishState.NOT_PUBLISHED,
+                20
+        );
+        var dish = restaurantService.createDish(dishCommand);
+
+        // Voeg een geplande wijziging toe
+        var scheduledChange = new ScheduledDishChange(
+                dish.getId(),
+                LocalDateTime.now().plusMinutes(10),
+                DishState.PUBLISHED,
+                "Nieuwe naam",
+                "Nieuwe beschrijving",
+                new BigDecimal("12.00"),
+                25
+        );
+        scheduledDishChangeRepository.save(scheduledChange);
+
+        // Act
+        var overview = restaurantService.getOverviewForRestaurantAndOwner(
+                restaurant.getId().id(),
+                ownerId
+        );
+
+        // Assert
+        assertThat(overview).isNotNull();
+        assertThat(overview.pendingChanges()).isNotEmpty();
+        assertThat(overview.pendingChanges().get(0).targetName()).isEqualTo("Nieuwe naam");
+    }
+    @Test
+    void checkout_shouldSucceedWhenDishAndRestaurantAreValid() {
+        // Arrange
+        Restaurant restaurant = testHelper.saveRestaurent();
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+
+        restaurantService.addOpenhours(
+                restaurant.getId().id(),
+                LocalTime.of(23, 59),
+                LocalTime.of(0, 0),
+                today
+        );
+
+        CreateDishCommand dishCommand = new CreateDishCommand(
+                restaurant.getId().id(),
+                "Test Burger",
+                "Juicy test burger",
+                new BigDecimal("10.00"),
+                DishState.PUBLISHED,
+                15
+        );
+        Dish dish = restaurantService.createDish(dishCommand);
+
+        var orderLine = new CheckoutRequestDto.OrderLineDto(
+                dish.getId().id(),
+                dish.getName(),
+                dish.getPrice(),
+                1,
+                dish.getPreparationTime()
+        );
+
+        var request = new CheckoutRequestDto(
+                UUID.randomUUID(),              // orderId
+                restaurant.getId().id(),        // restaurantId
+                UUID.randomUUID(),              // clientId
+                List.of(orderLine)
+        );
+
+        dish.changeStateTo(DishState.PUBLISHED);
+
+        // Act
+        CheckoutResponseDto response = checkoutService.checkout(request);
+
+        // Assert
+        assertThat(response).isNotNull();
+        assertThat(response.success()).isTrue();
+        assertThat(response.message()).isEqualTo("Checkout succesvol");
     }
 }

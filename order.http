@@ -20,7 +20,7 @@ GET http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/or
 Authorization: Bearer {{access_token}}
 
 ### Order accept
-PUT http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/order/95424219-ec5d-49f9-99c1-240f70476fa2/accept
+PUT http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/order/38ac2549-3146-4c77-abf6-57c689f69220/accept
 Authorization: Bearer {{access_token}}
 
 ### Order deny
