@@ -1,6 +1,12 @@
 @ownerId = 550e8400-e29b-41d4-a716-446655440000
+#POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
+#Content-Type: application/x-www-form-urlencoded
 
-### Eerst token ophalen
+#client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
+
+> {% client.global.set("access_token", response.body.access_token); %}
+
+### Eerst token ophalen(Hugo)
 POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
@@ -22,6 +28,7 @@ Authorization: Bearer {{access_token}}
 
 
 {
+  "addressId": "b12d5c1a-3d1f-4b8f-9f9a-11a2b3c4d5e6",
   "restaurantType": "BUFFET",
   "name": "La Bella Vita",
   "email": "info@labellavita.com",
@@ -35,6 +42,7 @@ Authorization: Bearer {{access_token}}
     "country": "Belgium"
   }
 }
+
 
 > {% client.global.set("restaurantId", response.body.id); %}
 

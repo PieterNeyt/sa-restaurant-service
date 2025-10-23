@@ -1,0 +1,53 @@
+@ownerId = 550e8400-e29b-41d4-a716-446655440000
+#POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
+#Content-Type: application/x-www-form-urlencoded
+
+#client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
+
+### Eerst token ophalen
+POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=backend-client&client_secret=pBAtElyMTHBp0IBEwO8G8h7bt6Jb4khZ&username=owner&password=password&grant_type=password&scope=openid
+
+
+> {% client.global.set("access_token", response.body.access_token); %}
+### Eerst token ophalen
+#POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
+#Content-Type: application/x-www-form-urlencoded
+
+#client_id=backend-client&client_secret=pBAtElyMTHBp0IBEwO8G8h7bt6Jb4khZ&username=owner&password=password&grant_type=password&scope=openid
+#> {% client.global.set("access_token", response.body.access_token); %}
+
+
+
+### Order van restaurant ophalen
+GET http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/orders
+Authorization: Bearer {{access_token}}
+
+> {%
+    let orders = JSON.parse(response.body);
+    if (orders.length > 0) {
+        client.global.set("orderId", orders[0].orderId);
+        client.global.set("restaurantId", orders[0].restaurantId);
+    }
+%}
+
+### Order accept
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/order/{{orderId}}/accept
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Order deny
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/order/{{orderId}}/deny
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+    "message": "sorry we kunnen op dit moment geen grote bestellingen aannemen"
+}
+
+### Order ready
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/order/{{orderId}}/ready
+Authorization: Bearer {{access_token}}
+Content-Type: application/json

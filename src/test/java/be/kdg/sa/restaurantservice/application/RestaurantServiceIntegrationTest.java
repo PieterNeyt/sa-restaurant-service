@@ -3,6 +3,8 @@ package be.kdg.sa.restaurantservice.application;
 import be.kdg.sa.restaurantservice.TestHelper;
 import be.kdg.sa.restaurantservice.api.dto.CheckoutRequestDto;
 import be.kdg.sa.restaurantservice.api.dto.CheckoutResponseDto;
+import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
+import be.kdg.sa.restaurantservice.application.command.CheckOutResponseCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
@@ -356,7 +358,7 @@ class RestaurantServiceIntegrationTest {
         dish.changeStateTo(DishState.PUBLISHED);
 
         // Act
-        CheckoutResponseDto response = checkoutService.checkout(request);
+        CheckOutResponseCommand response = checkoutService.checkout(CheckOutRequestCommand.from(request));
 
         // Assert
         assertThat(response).isNotNull();

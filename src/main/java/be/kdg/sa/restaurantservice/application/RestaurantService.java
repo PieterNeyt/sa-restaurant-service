@@ -1,8 +1,8 @@
 package be.kdg.sa.restaurantservice.application;
 
-import be.kdg.sa.restaurantservice.api.dto.RestaurantDto;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
+import be.kdg.sa.restaurantservice.application.command.RestaurantChangesOverviewCommand;
 import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
@@ -86,7 +86,7 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
-    public RestaurantDto.RestaurantChangesOverviewDto getOverviewForRestaurantAndOwner(UUID restaurantId, UUID ownerId) {
+    public RestaurantChangesOverviewCommand getOverviewForRestaurantAndOwner(UUID restaurantId, UUID ownerId) {
         var restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
 
@@ -95,7 +95,7 @@ public class RestaurantService {
         // pending changes ophalen
         var pendingChanges = scheduledRepo.findDueChangesByRestaurantAndOwner(restaurantId, ownerId);
 
-        return RestaurantDto.RestaurantChangesOverviewDto.from(restaurant, pendingChanges);
+        return RestaurantChangesOverviewCommand.from(restaurant, pendingChanges);
     }
 
     public OpeningHour addOpenhours(UUID restaurantId, LocalTime closingTime, LocalTime openingTime, DayOfWeek dayOfWeek) {

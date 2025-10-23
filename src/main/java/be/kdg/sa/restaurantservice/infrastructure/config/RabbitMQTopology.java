@@ -1,16 +1,21 @@
 package be.kdg.sa.restaurantservice.infrastructure.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQTopology {
-    public static final String ORDER_EXCHANGE_NAME = "order-exchange";
-    public static final String RESTAURANT_RESPONSE_EXCHANGE_NAME = "restaurant-response-exchange";
+    @Value("${rabbit.order.exchange}")
+    public String ORDER_EXCHANGE_NAME;
+    @Value("${rabbit.restaurant.response.exchange}")
+    public String RESTAURANT_RESPONSE_EXCHANGE_NAME;
+    @Value("${rabbit.delivery.exchange}")
+    public String DELIVERY_EXCHANGE_NAME;
+    @Value("${rabbit.restaurant.order.queue}")
+    public String RESTAURANT_ORDER_QUEUE;
 
-    public static final String DELIVERY_EXCHANGE_NAME = "delivery-exchange";
-    public static final String RESTAURANT_ORDER_QUEUE = "restaurant-order-queue";
 
     //ontvanget bestellingen
     @Bean

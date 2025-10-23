@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.domain.restaurant;
 
+import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
@@ -8,6 +9,7 @@ import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Identity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -33,6 +35,16 @@ public class Restaurant {
 
     private boolean isOpen;
     private PriceCategory priceCategory;
+
+    @Value("${restaurant.max.published_dishes}")
+    private int MAX_PUBLISHED_DISHES;
+    @Value("${restaurant.cheap.category}")
+    private int MAX_AVG_PRICE_CHEAP_CATEGORY;
+    @Value("${restaurant.normal.category}")
+    private int MAX_AVG_PRICE_NORMAL_CATEGORY;
+    @Value("${restaurant.expensive.category}")
+    private int MAX_AVG_PRICE_EXPENSIVE_CATEGORY;
+
 
     public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo) {
         Assert.notNull(ownerId, "owner id must not be null");
@@ -95,7 +107,7 @@ public class Restaurant {
     public void updateDishState(UUID dishId, DishState state) {
         //get Dish
         Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst()
-                .orElseThrow();//TODO : notfound exception toevoegen
+                .orElseThrow(() -> new NotFoundException("dish niet gevonden"));
 
         if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
             throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
@@ -107,7 +119,7 @@ public class Restaurant {
     private boolean hasMaximumPublishedDishes() {
         return dishes.stream()
                 .filter(d -> d.getState() == DishState.PUBLISHED)
-                .count() >= 10;
+                .count() >= MAX_PUBLISHED_DISHES;
     }
 
     public void changeOpenState(UUID requesterId) {
@@ -129,11 +141,11 @@ public class Restaurant {
         }
         double avgPrice = sum / dishes.size();
 
-        if (avgPrice < 10) {
+        if (avgPrice < MAX_AVG_PRICE_CHEAP_CATEGORY) {
             this.priceCategory = PriceCategory.CHEAP;
-        } else if (avgPrice <= 30) {
+        } else if (avgPrice <= MAX_AVG_PRICE_NORMAL_CATEGORY) {
             this.priceCategory = PriceCategory.NORMAL;
-        } else if (avgPrice <= 60) {
+        } else if (avgPrice <= MAX_AVG_PRICE_EXPENSIVE_CATEGORY) {
             this.priceCategory = PriceCategory.EXPENSIVE;
         } else {
             this.priceCategory = PriceCategory.PREMIUM;

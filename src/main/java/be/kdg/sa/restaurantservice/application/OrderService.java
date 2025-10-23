@@ -1,6 +1,7 @@
 package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.application.command.RestaurantResponse;
+import be.kdg.sa.restaurantservice.domain.order.IOrderMessageService;
 import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderId;
 import be.kdg.sa.restaurantservice.domain.order.OrderRepository;
@@ -10,6 +11,7 @@ import be.kdg.sa.restaurantservice.infrastructure.config.RabbitMQTopology;
 import be.kdg.sa.restaurantservice.infrastructure.handler.OrderMessage;
 import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,11 +21,10 @@ import java.util.UUID;
 @Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final RabbitTemplate rabbitTemplate;
-
-    public OrderService(OrderRepository orderRepository, RabbitTemplate rabbitTemplate) {
+    private final IOrderMessageService orderMessageService;
+    public OrderService(OrderRepository orderRepository, RabbitTemplate rabbitTemplate, IOrderMessageService orderMessageService) {
         this.orderRepository = orderRepository;
-        this.rabbitTemplate = rabbitTemplate;
+        this.orderMessageService = orderMessageService;
     }
 
     public void processIncomingOrder(OrderMessage msg) {
@@ -46,9 +47,9 @@ public class OrderService {
         order.checkRestaurant(restaurantId);
         order.deny(message);
 
-        rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
-                "order.deny." + orderId,
-                new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
+        orderMessageService.sendDenyResponse(new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
+
+
 
         orderRepository.delete(order);
     }
@@ -60,10 +61,7 @@ public class OrderService {
         order.checkRestaurant(restaurantId);
         order.accept();
 
-        rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
-                "order.accept." + orderId,
-                new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
-
+        orderMessageService.sendAcceptResponse(new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
         orderRepository.save(order);
 
     }
@@ -75,10 +73,7 @@ public class OrderService {
         order.checkRestaurant(restaurantId);
         order.ready();
 
-        rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
-                "order.ready." + orderId,
-                new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
-
+        orderMessageService.sendReadyResponse(new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
         orderRepository.save(order);
     }
 }

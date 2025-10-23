@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.api.dto;
 
+import be.kdg.sa.restaurantservice.application.command.RestaurantChangesOverviewCommand;
 import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
@@ -77,6 +78,17 @@ public record RestaurantDto(
                     dish.getState(),
                     dish.getPreparationTime());
         }
+
+        public static DishDto fromChanges(RestaurantChangesOverviewCommand.DishCommand dishCommand) {
+            return new DishDto(
+                    dishCommand.id(),
+                    dishCommand.RestaurantId(),
+                    dishCommand.name(),
+                    dishCommand.description(),
+                    dishCommand.price(),
+                    dishCommand.dishState(),
+                    dishCommand.preparationTime());
+        }
     }
 
     public record ScheduleDishChangeDto(
@@ -101,6 +113,19 @@ public record RestaurantDto(
                     change.getPreparationTime()
             );
         }
+
+        public static ScheduleDishChangeDto fromChanges(RestaurantChangesOverviewCommand.ScheduleDishChangeCommand scheduleDishChangeCommand) {
+            return new ScheduleDishChangeDto(
+                    scheduleDishChangeCommand.id(),
+                    scheduleDishChangeCommand.dishId(),
+                    scheduleDishChangeCommand.scheduledTime(),
+                    scheduleDishChangeCommand.targetState(),
+                    scheduleDishChangeCommand.targetName(),
+                    scheduleDishChangeCommand.targetDescription(),
+                    scheduleDishChangeCommand.targetPrice(),
+                    scheduleDishChangeCommand.targetPreparationTime()
+            );
+        }
     }
     public record RestaurantChangesOverviewDto(
             UUID restaurantId,
@@ -108,16 +133,12 @@ public record RestaurantDto(
             List<RestaurantDto.ScheduleDishChangeDto> pendingChanges,
             int pendingCount
     ) {
-        public static RestaurantChangesOverviewDto from(Restaurant restaurant, List<ScheduledDishChange> changes) {
+        public static RestaurantChangesOverviewDto from(RestaurantChangesOverviewCommand restaurantChangesOverviewCommand) {
             return new RestaurantChangesOverviewDto(
-                    restaurant.getId().id(),
-                    restaurant.getDishes().stream()
-                            .map(dish -> RestaurantDto.DishDto.from(dish, restaurant.getId().id()))
-                            .toList(),
-                    changes.stream()
-                            .map(RestaurantDto.ScheduleDishChangeDto::from)
-                            .toList(),
-                    changes.size()
+                    restaurantChangesOverviewCommand.restaurantId(),
+                    restaurantChangesOverviewCommand.liveDishes().stream().map(DishDto::fromChanges).toList(),
+                    restaurantChangesOverviewCommand.pendingChanges().stream().map(ScheduleDishChangeDto::fromChanges).toList(),
+                    restaurantChangesOverviewCommand.pendingCount()
             );
         }
     }

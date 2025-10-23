@@ -7,11 +7,10 @@ import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantRepository;
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChangeRepository;
-import be.kdg.sa.restaurantservice.infrastructure.config.RabbitMQTopology;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +22,8 @@ import java.util.List;
 @Transactional
 public class RestaurantSchedulerService {
 
+    @Value("${rabbit.restaurant.response.exchange}")
+    public String RESTAURANT_RESPONSE_EXCHANGE_NAME;
 
     private final ScheduledDishChangeRepository scheduledRepo;
     private final RestaurantRepository restRepo;
@@ -36,6 +37,7 @@ public class RestaurantSchedulerService {
         for (ScheduledDishChange change : dueChanges) {
             Restaurant restaurant = restRepo.findRestaurantFromDishId(change.getDishId().id())
                     .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
             restaurant.updateDish(
                     change.getDishId(),
                     change.getTargetState(),
@@ -45,7 +47,7 @@ public class RestaurantSchedulerService {
                     change.getPreparationTime());
 
             restRepo.save(restaurant);
-            scheduledRepo.save(change);
+            scheduledRepo.delete(change);
         }
     }
 
@@ -58,7 +60,7 @@ public class RestaurantSchedulerService {
             if(order.has5minutsPassed()){
                 order.deny("Restaurant heeft niet binnen de 5 minute geantwoord");
 
-                rabbitTemplate.convertAndSend( RabbitMQTopology.RESTAURANT_RESPONSE_EXCHANGE_NAME,
+                rabbitTemplate.convertAndSend( RESTAURANT_RESPONSE_EXCHANGE_NAME,
                         "order.response." + order.getOrderId().id(),
                         new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
 

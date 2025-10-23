@@ -2,6 +2,8 @@ package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.api.dto.CheckoutRequestDto;
 import be.kdg.sa.restaurantservice.api.dto.CheckoutResponseDto;
+import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
+import be.kdg.sa.restaurantservice.application.command.CheckOutResponseCommand;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
@@ -22,7 +24,7 @@ public class CheckoutService {
         this.restaurantService = restaurantService;
     }
 
-    public CheckoutResponseDto prepareCheckout(CheckoutRequestDto checkoutRequest) {
+    public CheckOutResponseCommand prepareCheckout(CheckOutRequestCommand checkoutRequest) {
         Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
 
         if (restaurant == null) {
@@ -38,7 +40,7 @@ public class CheckoutService {
         var now = LocalTime.now();
 
         int maxPreparationMinutes = checkoutRequest.items().stream()
-                .mapToInt(CheckoutRequestDto.OrderLineDto::preparationTime)
+                .mapToInt(CheckOutRequestCommand.OrderLineCommand::preparationTime)
                 .max()
                 .orElse(0);
 
@@ -49,11 +51,11 @@ public class CheckoutService {
         }
 
 
-        return new CheckoutResponseDto(checkoutRequest.orderId(), true, "Checkout voorbereid");
+        return new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout voorbereid");
     }
 
 
-    public CheckoutResponseDto checkout(CheckoutRequestDto checkoutRequest) {
+    public CheckOutResponseCommand checkout(CheckOutRequestCommand checkoutRequest) {
 
         prepareCheckout(checkoutRequest);
 
@@ -82,7 +84,7 @@ public class CheckoutService {
             }
         }
 
-        return new CheckoutResponseDto(checkoutRequest.orderId(), true, "Checkout succesvol");
+        return new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout succesvol");
     }
 
 

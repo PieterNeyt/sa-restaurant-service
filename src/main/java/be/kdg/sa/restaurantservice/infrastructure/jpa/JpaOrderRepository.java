@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface JpaOrderRepository extends JpaRepository<JpaOrderEntity, UUID> {
-    @Query("SELECT jpo FROM JpaOrderEntity jpo WHERE jpo.restaurantId = :restaurantId")
+    @Query("SELECT jpo FROM JpaOrderEntity jpo WHERE jpo.restaurantId = :restaurantId AND jpo.status = 'PENDING'")
     List<JpaOrderEntity> findOrdersByRestaurantId(@Param("restaurantId") UUID restaurantId);
 
     @Query("SELECT jpo FROM JpaOrderEntity jpo WHERE jpo.status = 'PENDING'")

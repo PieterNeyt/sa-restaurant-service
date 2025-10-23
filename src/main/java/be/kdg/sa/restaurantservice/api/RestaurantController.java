@@ -5,6 +5,8 @@ import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.DishDto;
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.RestaurantChangesOverviewDto;
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.ScheduleDishChangeDto;
 import be.kdg.sa.restaurantservice.application.*;
+import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
+import be.kdg.sa.restaurantservice.application.command.CheckOutResponseCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.domain.order.Order;
@@ -21,7 +23,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:9090")
 @RequestMapping("/api/restaurant")
 public class RestaurantController {
     private final RestaurantService restaurantService;
@@ -155,7 +156,7 @@ public class RestaurantController {
     ) {
         UUID ownerId = getOwnerIdFromToken(token);
         var overview = restaurantService.getOverviewForRestaurantAndOwner(restaurantId, ownerId);
-        return ResponseEntity.ok(overview);
+        return ResponseEntity.ok(RestaurantDto.RestaurantChangesOverviewDto.from(overview));
     }
 
     @PreAuthorize("hasAuthority('owner')")
@@ -171,16 +172,19 @@ public class RestaurantController {
 
 
     @PostMapping("/prepareCheckout")
-    public ResponseEntity<?> prepareCheckout(@RequestBody CheckoutRequestDto checkoutRequest) {
-        var response = checkoutService.prepareCheckout(checkoutRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<CheckoutResponseDto> prepareCheckout(@RequestBody CheckoutRequestDto checkoutRequest) {
+        var checkOutRequestCommand = CheckOutRequestCommand.from(checkoutRequest);
+        var response = checkoutService.checkout(checkOutRequestCommand);
+
+        return ResponseEntity.ok(CheckoutResponseDto.from(response));
 
     }
 
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponseDto> checkout(@RequestBody CheckoutRequestDto checkoutRequest) {
-        var response = checkoutService.checkout(checkoutRequest);
-        return ResponseEntity.ok(response);
+        var checkOutRequestCommand = CheckOutRequestCommand.from(checkoutRequest);
+        var response = checkoutService.checkout(checkOutRequestCommand);
+        return ResponseEntity.ok(CheckoutResponseDto.from(response));
     }
 
     @PreAuthorize("hasAuthority('owner')")
