@@ -44,14 +44,18 @@ public class Order {
         this.message = message;
     }
 
-    public void accept() {
+    public void accept(UUID restaurantId) {
+        checkRestaurant(restaurantId);
+
         if(status == OrderStatus.ACCEPTED || status == OrderStatus.READY_FOR_PICKUP)
             throw new IllegalStateException("Order has already been accepted or is altready ready for pick up");
 
         this.status = OrderStatus.ACCEPTED;
     }
 
-    public void deny(String message) {
+    public void deny(String message, UUID restaurantId) {
+        checkRestaurant(restaurantId);
+
         if(status == OrderStatus.ACCEPTED || status == OrderStatus.READY_FOR_PICKUP)
             throw new IllegalStateException("Order has already been accepted or is already ready for pick up");
 
@@ -59,7 +63,9 @@ public class Order {
         this.status = OrderStatus.DENIED;
     }
 
-    public void ready() {
+    public void ready(UUID restaurantId) {
+        checkRestaurant(restaurantId);
+
         if(status != OrderStatus.ACCEPTED)
             throw new IllegalStateException("Order is not yet accepted");
 

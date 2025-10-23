@@ -1,17 +1,15 @@
 package be.kdg.sa.restaurantservice.application;
 
 import be.kdg.sa.restaurantservice.application.command.RestaurantResponse;
-import be.kdg.sa.restaurantservice.domain.order.IOrderMessageService;
+import be.kdg.sa.restaurantservice.domain.NotFoundException;
+import be.kdg.sa.restaurantservice.domain.order.IOrderMessagePublisher;
 import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderId;
 import be.kdg.sa.restaurantservice.domain.order.OrderRepository;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantId;
-import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantRepository;
-import be.kdg.sa.restaurantservice.infrastructure.config.RabbitMQTopology;
 import be.kdg.sa.restaurantservice.infrastructure.handler.OrderMessage;
 import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +19,8 @@ import java.util.UUID;
 @Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final IOrderMessageService orderMessageService;
-    public OrderService(OrderRepository orderRepository, RabbitTemplate rabbitTemplate, IOrderMessageService orderMessageService) {
+    private final IOrderMessagePublisher orderMessageService;
+    public OrderService(OrderRepository orderRepository, RabbitTemplate rabbitTemplate, IOrderMessagePublisher orderMessageService) {
         this.orderRepository = orderRepository;
         this.orderMessageService = orderMessageService;
     }
@@ -42,10 +40,8 @@ public class OrderService {
 
     public void denyOrder(UUID orderId,UUID restaurantId, String message) {
         Order order = orderRepository.findByid(orderId)
-                .orElseThrow();
-
-        order.checkRestaurant(restaurantId);
-        order.deny(message);
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        order.deny(message,restaurantId);
 
         orderMessageService.sendDenyResponse(new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
 
@@ -56,22 +52,17 @@ public class OrderService {
 
     public void acceptOrder(UUID orderId,UUID restaurantId) {
         Order order = orderRepository.findByid(orderId)
-                .orElseThrow();
-
-        order.checkRestaurant(restaurantId);
-        order.accept();
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        order.accept(restaurantId);
 
         orderMessageService.sendAcceptResponse(new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
         orderRepository.save(order);
-
     }
 
     public void orderIsReady(UUID orderId,UUID restaurantId) {
         Order order = orderRepository.findByid(orderId)
-                .orElseThrow();
-
-        order.checkRestaurant(restaurantId);
-        order.ready();
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        order.ready(restaurantId);
 
         orderMessageService.sendReadyResponse(new RestaurantResponse(order.getOrderId().id(),order.getStatus().toString(), order.getMessage()));
         orderRepository.save(order);

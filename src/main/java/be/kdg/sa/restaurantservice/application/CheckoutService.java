@@ -5,6 +5,7 @@ import be.kdg.sa.restaurantservice.api.dto.CheckoutResponseDto;
 import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
 import be.kdg.sa.restaurantservice.application.command.CheckOutResponseCommand;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
+import be.kdg.sa.restaurantservice.domain.order.OrderLine;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishState;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -26,63 +28,24 @@ public class CheckoutService {
 
     public CheckOutResponseCommand prepareCheckout(CheckOutRequestCommand checkoutRequest) {
         Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
+        List<OrderLine> items = checkoutRequest.items()
+                .stream()
+                .map(OrderLine::from)
+                .toList();
 
-        if (restaurant == null) {
-            throw new NotFoundException("Restaurant niet gevonden");
-        }
-
-        DayOfWeek today = LocalDate.now().getDayOfWeek();
-        var openingHoursToday = restaurant.getOpeningHours().stream()
-                .filter(oh -> oh.getDayOfWeek() == today)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Geen openingstijden beschikbaar voor vandaag"));
-
-        var now = LocalTime.now();
-
-        int maxPreparationMinutes = checkoutRequest.items().stream()
-                .mapToInt(CheckOutRequestCommand.OrderLineCommand::preparationTime)
-                .max()
-                .orElse(0);
-
-        var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
-
-        if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-         throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
-        }
-
-
-        return new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout voorbereid");
+        restaurant.prepareCheckout(items);
+        return new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout prepared");
     }
 
 
     public CheckOutResponseCommand checkout(CheckOutRequestCommand checkoutRequest) {
-
         prepareCheckout(checkoutRequest);
 
-
-        for (var item : checkoutRequest.items()) {
+        checkoutRequest.items()
+                .forEach(item -> {
             var restaurant = restaurantService.GetRestaurantWithDishFromDish(item.dishId());
-            var dish = restaurant.getDishes().stream()
-                    .filter(d -> d.getId().id().equals(item.dishId()))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Dish not found"));
-
-
-            if (dish.getPrice().compareTo(item.price()) != 0 ||
-                    !dish.getName().equals(item.name()) ||
-                    dish.getPreparationTime() != item.preparationTime()) {
-
-                throw new IllegalStateException(String.format(
-                        "Dish %s is gewijzigd (prijs of eigenschappen verschillen). " +
-                                "Verwacht: €%s, actueel: €%s",
-                        dish.getName(), item.price(), dish.getPrice()
-                ));
-            }
-
-            if (dish.getState() != DishState.PUBLISHED) {
-                throw new IllegalStateException("Dish " + dish.getName() + " is niet beschikbaar.");
-            }
-        }
+            restaurant.checkDish(OrderLine.from(item));
+        });
 
         return new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout succesvol");
     }

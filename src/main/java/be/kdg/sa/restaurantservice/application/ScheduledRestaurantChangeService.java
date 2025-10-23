@@ -43,7 +43,7 @@ public class ScheduledRestaurantChangeService {
         );
         Restaurant restaurant = restRepo.findById(restaurantId).orElseThrow();
         for (ScheduledDishChange change : changes) {
-            restaurant.updateDish(change.getDishId(),
+            restaurant.changeDish(change.getDishId(),
                     change.getTargetState(),
                     change.getTargetName(),
                     change.getTargetPrice(),

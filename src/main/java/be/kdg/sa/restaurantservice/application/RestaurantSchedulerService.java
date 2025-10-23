@@ -38,7 +38,7 @@ public class RestaurantSchedulerService {
             Restaurant restaurant = restRepo.findRestaurantFromDishId(change.getDishId().id())
                     .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-            restaurant.updateDish(
+            restaurant.changeDish(
                     change.getDishId(),
                     change.getTargetState(),
                     change.getTargetName(),
@@ -58,7 +58,7 @@ public class RestaurantSchedulerService {
         for (Order order : orders) {
 
             if(order.has5minutsPassed()){
-                order.deny("Restaurant heeft niet binnen de 5 minute geantwoord");
+                order.deny("Restaurant heeft niet binnen de 5 minute geantwoord",order.getRestaurantId().id());
 
                 rabbitTemplate.convertAndSend( RESTAURANT_RESPONSE_EXCHANGE_NAME,
                         "order.response." + order.getOrderId().id(),

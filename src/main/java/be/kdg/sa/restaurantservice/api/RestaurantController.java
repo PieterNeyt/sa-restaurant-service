@@ -96,9 +96,8 @@ public class RestaurantController {
 
     @GetMapping("/dish/{id}")
     public ResponseEntity<RestaurantDto.DishDto> getDish(@PathVariable("id") UUID id) {
-        Restaurant restaurant = restaurantService.GetRestaurantWithDishFromDish(id);
-        Dish dish = restaurant.getDishes().stream().filter(d -> d.getId().id().equals(id)).findFirst().orElseThrow();
-        return ResponseEntity.ok(DishDto.from(dish, restaurant.getId().id()));
+        Dish dish = restaurantService.getDishFromDishId(id);
+        return ResponseEntity.ok(DishDto.from(dish, null));
     }
 
     @PreAuthorize("hasAuthority('owner')")
@@ -106,7 +105,6 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {
 
         Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
-
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
     }
 

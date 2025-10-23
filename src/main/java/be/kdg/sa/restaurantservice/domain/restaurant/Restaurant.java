@@ -1,7 +1,10 @@
 package be.kdg.sa.restaurantservice.domain.restaurant;
 
+import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.address.Address;
+import be.kdg.sa.restaurantservice.domain.order.Order;
+import be.kdg.sa.restaurantservice.domain.order.OrderLine;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.DishId;
@@ -152,7 +155,7 @@ public class Restaurant {
         }
     }
 
-    public void updateDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription, int targetPreparationTime) {
+    public void changeDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription, int targetPreparationTime) {
         dishes.stream()
                 .filter(d -> d.getId().id().equals(dishId.id()))
                 .findFirst().ifPresent(dish -> {
@@ -185,5 +188,49 @@ public class Restaurant {
 
     public RestaurantType getRestaurantType() {
         return this.type;
+    }
+
+    public void prepareCheckout(List<OrderLine> items) {
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        var openingHoursToday = openingHours.stream()
+                .filter(oh -> oh.getDayOfWeek() == today)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Geen openingstijden beschikbaar voor vandaag"));
+
+        var now = LocalTime.now();
+
+        int maxPreparationMinutes = items.stream()
+                .mapToInt(OrderLine::preparationTime)
+                .max()
+                .orElse(0);
+
+        var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
+
+        if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
+            throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+        }
+    }
+
+    public void checkDish(OrderLine item) {
+        var dish = dishes.stream()
+                .filter(d -> d.getId().id().equals(item.dishId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Dish not found"));
+
+
+        if (dish.getPrice().compareTo(item.price()) != 0 ||
+                !dish.getName().equals(item.name()) ||
+                dish.getPreparationTime() != item.preparationTime()) {
+
+            throw new IllegalStateException(String.format(
+                    "Dish %s is gewijzigd (prijs of eigenschappen verschillen). " +
+                            "Verwacht: €%s, actueel: €%s",
+                    dish.getName(), item.price(), dish.getPrice()
+            ));
+        }
+
+        if (dish.getState() != DishState.PUBLISHED) {
+            throw new IllegalStateException("Dish " + dish.getName() + " is niet beschikbaar.");
+        }
     }
 }

@@ -1,19 +1,19 @@
 package be.kdg.sa.restaurantservice.infrastructure.handler;
 
 import be.kdg.sa.restaurantservice.application.command.RestaurantResponse;
-import be.kdg.sa.restaurantservice.domain.order.IOrderMessageService;
+import be.kdg.sa.restaurantservice.domain.order.IOrderMessagePublisher;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class OrderMessageService implements IOrderMessageService {
+@Component
+public class OrderMessagePublisher implements IOrderMessagePublisher {
     @Value("${rabbit.restaurant.response.exchange}")
     public String RESTAURANT_RESPONSE_EXCHANGE_NAME;
 
     private final RabbitTemplate rabbitTemplate;
 
-    public OrderMessageService(RabbitTemplate rabbitTemplate) {
+    public OrderMessagePublisher(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 

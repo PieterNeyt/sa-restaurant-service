@@ -3,6 +3,7 @@ package be.kdg.sa.restaurantservice.application;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.application.command.RestaurantChangesOverviewCommand;
+import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.address.Address;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.*;
@@ -29,11 +30,9 @@ public class RestaurantService {
     }
 
     public Restaurant createRestaurant(CreateRestaurantCommand restaurantCommand) {
-        //check of owner al een restaurant heeft anders throw exception
         if (restaurantRepository.CheckIfOwnerAlreadyOwnsRestaurant(restaurantCommand.ownerId()))
             throw new IllegalStateException("Owner already owns restaurant");
 
-        //maak nieuw restaurant aan
         Address address = new Address(
                 restaurantCommand.city(),
                 restaurantCommand.streetNumber(),
@@ -50,18 +49,15 @@ public class RestaurantService {
                 restaurantCommand.email(),
                 restaurantCommand.logo());
 
-        //slaag deze op
         restaurantRepository.save(restaurant);
-
         return restaurant;
     }
 
     public Dish createDish(CreateDishCommand command) {
         Dish dish = new Dish(command.name(),command.description(),command.price(),command.preparationTime(), command.dishState());
 
-        //TODO not found toevoegen
         Restaurant restaurant =  restaurantRepository.findById(command.restaurantId())
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
 
         restaurant.addDish(
                 dish.getId().id(),
@@ -76,23 +72,25 @@ public class RestaurantService {
     }
 
     public void updateStateDish(UUID dishId, DishState state) {
-        Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
         restaurant.updateDishState(dishId,state);
         restaurantRepository.save(restaurant);
     }
     public void updateOpenState(UUID restaurantId, UUID requesterId ) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
         restaurant.changeOpenState(requesterId);
         restaurantRepository.save(restaurant);
     }
 
     public RestaurantChangesOverviewCommand getOverviewForRestaurantAndOwner(UUID restaurantId, UUID ownerId) {
         var restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
 
         restaurant.isOwner(ownerId);
-
-        // pending changes ophalen
         var pendingChanges = scheduledRepo.findDueChangesByRestaurantAndOwner(restaurantId, ownerId);
 
         return RestaurantChangesOverviewCommand.from(restaurant, pendingChanges);
@@ -113,10 +111,24 @@ public class RestaurantService {
     }
 
     public Restaurant getRestaurantById(UUID restaurantId) {
-        return restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        return restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
     }
 
     public Restaurant GetRestaurantWithDishFromDish(UUID id) {
-        return restaurantRepository.findRestaurantFromDishId(id).orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        return restaurantRepository.findRestaurantFromDishId(id)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+    }
+
+    public Dish getDishFromDishId(UUID id) {
+        Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(id)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
+        return restaurant.getDishes()
+                .stream()
+                .filter(d -> d.getId().id().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Dish not found"));
+
     }
 }
