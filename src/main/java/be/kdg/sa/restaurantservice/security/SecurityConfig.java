@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -22,6 +23,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    public String JWT_ISSUER;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -48,9 +51,11 @@ public class SecurityConfig {
         jwtConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRealmRoleConverter());
         return jwtConverter;
     }
+
+
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("http://localhost:8180/realms/keepdishesgoing");
+        return JwtDecoders.fromIssuerLocation(JWT_ISSUER);
     }
 }
 

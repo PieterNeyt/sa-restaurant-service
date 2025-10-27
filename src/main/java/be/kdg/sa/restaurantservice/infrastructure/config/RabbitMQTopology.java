@@ -16,6 +16,9 @@ public class RabbitMQTopology {
     @Value("${rabbit.restaurant.order.queue}")
     public String RESTAURANT_ORDER_QUEUE;
 
+    @Value("${rabbit.order.routing.key}")
+    public String RESTAURANT_ORDER_ROUTING_KEY;
+
 
     //ontvanget bestellingen
     @Bean
@@ -28,7 +31,7 @@ public class RabbitMQTopology {
     Binding orderBinding(Queue restaurantOrderQueue) {
         return BindingBuilder.bind(restaurantOrderQueue)
                 .to(new TopicExchange(ORDER_EXCHANGE_NAME))
-                .with("order.place.*");
+                .with(RESTAURANT_ORDER_ROUTING_KEY);
     }
 
     @Bean

@@ -60,7 +60,7 @@ public class Dish {
     }
     public void changePreparationTime(int newPreparationTime) {
         if (newPreparationTime <0) {
-            throw new IllegalArgumentException("Prepatationtime cannot be smaller than 0");
+            throw new IllegalArgumentException("Preperationtime cannot be smaller than 0");
         }
         this.preparationTime = newPreparationTime;
     }
@@ -71,7 +71,7 @@ public class Dish {
 
     public void changePriceTo(BigDecimal newPrice) {
         if (newPrice == null || newPrice.signum() < 0) {
-            throw new IllegalArgumentException("Prijs moet groter zijn dan 0");
+            throw new IllegalArgumentException("price must be higher than 0");
         }
         this.price = newPrice;
     }
@@ -82,5 +82,7 @@ public class Dish {
         }
         this.state = targetState;
     }
+
+
 }
 

@@ -17,7 +17,6 @@ public class OrderHandler {
 
     @RabbitListener(queues = "${rabbit.restaurant.order.queue}")
     public void receiveOrder(OrderMessage msg) {
-        log.info("Received Order Message: {}", msg);
         orderService.processIncomingOrder(msg);
     }
 }
