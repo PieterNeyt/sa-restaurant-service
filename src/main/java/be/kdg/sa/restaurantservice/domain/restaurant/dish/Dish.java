@@ -76,13 +76,15 @@ public class Dish {
         this.price = newPrice;
     }
 
-    public void changeStateTo(DishState targetState) {
-        if(targetState == null) {
-            throw new IllegalArgumentException("State must not be null");
-        }
-        this.state = targetState;
+    public void publish() {
+        this.state = DishState.PUBLISHED;
     }
-
+    public void markTempNotAvailable() {
+        this.state = DishState.TEMP_NOT_AVAILABLE;
+    }
+    public void hide() {
+        this.state = DishState.NOT_PUBLISHED;
+    }
 
 }
 

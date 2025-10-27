@@ -162,7 +162,7 @@ class RestaurantServiceIntegrationTest {
         assertThat(createdDish.getState()).isEqualTo(DishState.NOT_PUBLISHED);
 
         // Act
-        restaurantService.updateStateDish(createdDish.getId().id(), DishState.PUBLISHED);
+        restaurantService.publishDish(createdDish.getId().id());
 
         // Assert
         Restaurant updatedRestaurant = restaurantRepository.findById(restaurant.getId().id())
@@ -239,21 +239,21 @@ class RestaurantServiceIntegrationTest {
         Restaurant restaurant = restaurantService.createRestaurant(command);
 
         // Act
-         restaurantService.addOpenhours(
+        restaurantService.addOpenhours(
                 restaurant.getId().id(),
                 LocalTime.of(22, 0),
                 LocalTime.of(11, 0),
                 DayOfWeek.MONDAY
         );
 
-         restaurantService.addOpenhours(
+        restaurantService.addOpenhours(
                 restaurant.getId().id(),
                 LocalTime.of(23, 30),
                 LocalTime.of(11, 0),
                 DayOfWeek.FRIDAY
         );
 
-        // Assert
+        // Assert - Verify opening hours
         Restaurant updatedRestaurant = restaurantRepository.findById(restaurant.getId().id())
                 .orElseThrow();
         assertThat(updatedRestaurant.getOpeningHours()).hasSize(2);
@@ -262,20 +262,30 @@ class RestaurantServiceIntegrationTest {
                         && oh.getOpeningTime().equals(LocalTime.of(11, 0))
                         && oh.getClosingTime().equals(LocalTime.of(22, 0)));
 
-        // Act - Toggle open state
-        boolean initialState = updatedRestaurant.isOpen();
-        restaurantService.updateOpenState(restaurant.getId().id(), ownerId);
+        // Act - Open the restaurant first
+        assertThat(updatedRestaurant.isOpen()).isFalse();
+        restaurantService.open(restaurant.getId().id(), ownerId);
 
-        // Assert - Verify state toggle
-        Restaurant toggledRestaurant = restaurantRepository.findById(restaurant.getId().id())
+        // Assert - Verify restaurant is now open
+        Restaurant openedRestaurant = restaurantRepository.findById(restaurant.getId().id())
                 .orElseThrow();
-        assertThat(toggledRestaurant.isOpen()).isNotEqualTo(initialState);
+        assertThat(openedRestaurant.isOpen()).isTrue();
 
-        // Toggle again
-        restaurantService.updateOpenState(restaurant.getId().id(), ownerId);
-        Restaurant reToggledRestaurant = restaurantRepository.findById(restaurant.getId().id())
+        // Act - Close the restaurant
+        restaurantService.close(restaurant.getId().id(), ownerId);
+
+        // Assert - Verify restaurant is now closed
+        Restaurant closedRestaurant = restaurantRepository.findById(restaurant.getId().id())
                 .orElseThrow();
-        assertThat(reToggledRestaurant.isOpen()).isEqualTo(initialState);
+        assertThat(closedRestaurant.isOpen()).isFalse();
+
+        // Act - Open again
+        restaurantService.open(restaurant.getId().id(), ownerId);
+
+        // Assert - Verify restaurant is open again
+        Restaurant reopenedRestaurant = restaurantRepository.findById(restaurant.getId().id())
+                .orElseThrow();
+        assertThat(reopenedRestaurant.isOpen()).isTrue();
     }
     @Test
     void getOverviewForRestaurantAndOwner_shouldReturnOverviewWithPendingChanges() {
@@ -355,7 +365,7 @@ class RestaurantServiceIntegrationTest {
                 List.of(orderLine)
         );
 
-        dish.changeStateTo(DishState.PUBLISHED);
+        dish.publish();
 
         // Act
         CheckOutResponseCommand response = checkoutService.checkout(CheckOutRequestCommand.from(request));

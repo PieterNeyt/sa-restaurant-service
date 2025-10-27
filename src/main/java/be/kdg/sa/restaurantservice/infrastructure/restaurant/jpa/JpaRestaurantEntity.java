@@ -92,8 +92,8 @@ public class JpaRestaurantEntity {
 
 
 
-    public Restaurant toDomain() {
-        Restaurant restaurant = new Restaurant(
+    public Restaurant toDomain(RestaurantFactory factory) {
+        Restaurant restaurant = factory.reconstitute(
                 new RestaurantId(id),
                 new OwnerId(ownerId),
                 address != null ? address.toDomain() : null,
@@ -101,7 +101,7 @@ public class JpaRestaurantEntity {
                 name,
                 email,
                 logo,
-                 isOpen,
+                isOpen,
                 priceCategory);
 
         dishes.forEach(dish -> restaurant.addDish(

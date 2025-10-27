@@ -108,21 +108,42 @@ public class RestaurantController {
     }
 
     @PreAuthorize("hasAuthority('owner')")
-    @PutMapping("/changeStateDish/{id}")
-    public ResponseEntity<Void> changeStateDish(@PathVariable("id") UUID id,
-                                                @RequestBody DishState state) {
-        restaurantService.updateStateDish(id, state);
+    @PutMapping("/{id}/publishDish")
+    public ResponseEntity<Void> publishDish(@PathVariable("id") UUID id) {
+        restaurantService.publishDish(id);
+        return ResponseEntity.ok().build();
+    }
+    @PreAuthorize("hasAuthority('owner')")
+    @PutMapping("/{id}/hideDish")
+    public ResponseEntity<Void> hideDish(@PathVariable("id") UUID id) {
+        restaurantService.hideDish(id);
+        return ResponseEntity.ok().build();
+    }
+    @PreAuthorize("hasAuthority('owner')")
+    @PutMapping("/{id}/markDishUnavailable")
+    public ResponseEntity<Void> markDishUnavailable(@PathVariable("id") UUID id) {
+        restaurantService.markDishUnavailable(id);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('owner')")
-    @PutMapping("/{id}/changeOpenState")
-    public ResponseEntity<Void> changeOpenState(
+    @PutMapping("/{id}/open")
+    public ResponseEntity<Void> open(
             @PathVariable("id") UUID restaurantId,
             @AuthenticationPrincipal Jwt token
     ) {
         UUID ownerId = getOwnerIdFromToken(token);
-        restaurantService.updateOpenState(restaurantId, ownerId);
+        restaurantService.open(restaurantId, ownerId);
+        return ResponseEntity.ok().build();
+    }
+    @PreAuthorize("hasAuthority('owner')")
+    @PutMapping("/{id}/close")
+    public ResponseEntity<Void> close(
+            @PathVariable("id") UUID restaurantId,
+            @AuthenticationPrincipal Jwt token
+    ) {
+        UUID ownerId = getOwnerIdFromToken(token);
+        restaurantService.close(restaurantId, ownerId);
         return ResponseEntity.ok().build();
     }
 
