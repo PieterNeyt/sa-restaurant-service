@@ -11,6 +11,13 @@ public class OrderMessagePublisher implements IOrderMessagePublisher {
     @Value("${rabbit.restaurant.response.exchange}")
     public String RESTAURANT_RESPONSE_EXCHANGE_NAME;
 
+    @Value("${rabbit.order.ready.routing.key}")
+    public String ORDER_READY_ROUTING_KEY;
+    @Value("${rabbit.order.accept.routing.key}")
+    public String ORDER_ACCEPT_ROUTING_KEY;
+    @Value("${rabbit.order.deny.routing.key}")
+    public String ORDER_DENY_ROUTING_KEY;
+
     private final RabbitTemplate rabbitTemplate;
 
     public OrderMessagePublisher(RabbitTemplate rabbitTemplate) {
@@ -20,18 +27,18 @@ public class OrderMessagePublisher implements IOrderMessagePublisher {
     @Override
     public void sendReadyResponse(RestaurantResponse restaurantResponse) {
         rabbitTemplate.convertAndSend( RESTAURANT_RESPONSE_EXCHANGE_NAME,
-                "order.ready." + restaurantResponse.orderId(),restaurantResponse);
+                ORDER_READY_ROUTING_KEY + restaurantResponse.orderId(),restaurantResponse);
     }
 
     @Override
     public void sendAcceptResponse(RestaurantResponse restaurantResponse) {
         rabbitTemplate.convertAndSend( RESTAURANT_RESPONSE_EXCHANGE_NAME,
-                "order.accept." + restaurantResponse.orderId(),restaurantResponse);
+                ORDER_ACCEPT_ROUTING_KEY + restaurantResponse.orderId(),restaurantResponse);
     }
 
     @Override
     public void sendDenyResponse(RestaurantResponse restaurantResponse) {
         rabbitTemplate.convertAndSend( RESTAURANT_RESPONSE_EXCHANGE_NAME,
-                "order.deny." + restaurantResponse.orderId(),restaurantResponse);
+                ORDER_DENY_ROUTING_KEY + restaurantResponse.orderId(),restaurantResponse);
     }
 }
