@@ -110,10 +110,10 @@ public class Restaurant {
     public void updateDishState(UUID dishId, DishState state) {
         //get Dish
         Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst()
-                .orElseThrow(() -> new NotFoundException("dish niet gevonden"));
+                .orElseThrow(() -> new NotFoundException("dish not found"));
 
         if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
-            throw new RuntimeException("Maximum aantal published dishes bereikt (10)");
+            throw new RuntimeException("Maximum amount of dishes achieved (10)");
 
         dish.changeStateTo(state);
         updatePriceCategory();
@@ -127,7 +127,7 @@ public class Restaurant {
 
     public void changeOpenState(UUID requesterId) {
         if (!ownerId.id().equals(requesterId)) {
-            throw new IllegalStateException("Enkel de eigenaar kan de openingsstatus wijzigen");
+            throw new IllegalStateException("Only the restaurant owner can change the open state");
         }
         this.isOpen = !isOpen;
     }
@@ -195,7 +195,7 @@ public class Restaurant {
         var openingHoursToday = openingHours.stream()
                 .filter(oh -> oh.getDayOfWeek() == today)
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Geen openingstijden beschikbaar voor vandaag"));
+                .orElseThrow(() -> new NotFoundException("No opening hours available for today"));
 
         var now = LocalTime.now();
 
@@ -207,7 +207,7 @@ public class Restaurant {
         var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
 
         if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-            throw new NotFoundException("Restaurant is gesloten of kan bestelling niet op tijd klaarmaken");
+         //   throw new NotFoundException("Restaurant is closed or order cannot be fullfiled ontime");
         }
     }
 
@@ -222,15 +222,11 @@ public class Restaurant {
                 !dish.getName().equals(item.name()) ||
                 dish.getPreparationTime() != item.preparationTime()) {
 
-            throw new IllegalStateException(String.format(
-                    "Dish %s is gewijzigd (prijs of eigenschappen verschillen). " +
-                            "Verwacht: €%s, actueel: €%s",
-                    dish.getName(), item.price(), dish.getPrice()
-            ));
+            throw new IllegalStateException("The attributes of one or more dishes has changed ");
         }
 
         if (dish.getState() != DishState.PUBLISHED) {
-            throw new IllegalStateException("Dish " + dish.getName() + " is niet beschikbaar.");
+            throw new IllegalStateException("Dish " + dish.getName() + " is not available right now.");
         }
     }
 }

@@ -102,7 +102,7 @@ public class RestaurantController {
 
     @PreAuthorize("hasAuthority('owner')")
     @PutMapping("/dish/{id}/state")
-    public ResponseEntity<RestaurantDto> addDish(@PathVariable("restaurantId") UUID restaurantId) {
+    public ResponseEntity<RestaurantDto> addDish(@PathVariable("id") UUID restaurantId) {
 
         Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
         return ResponseEntity.ok(RestaurantDto.from(restaurant));
