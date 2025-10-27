@@ -106,7 +106,7 @@ public class RestaurantService {
         return openingHour;
     }
 
-    public List<Restaurant> getAllRestaurants() {
+    public List<Restaurant> findAll() {
         return restaurantRepository.findAll();
     }
 

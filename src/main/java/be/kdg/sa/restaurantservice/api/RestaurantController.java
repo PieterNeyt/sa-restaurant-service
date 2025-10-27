@@ -6,7 +6,6 @@ import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.RestaurantChangesOvervi
 import be.kdg.sa.restaurantservice.api.dto.RestaurantDto.ScheduleDishChangeDto;
 import be.kdg.sa.restaurantservice.application.*;
 import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
-import be.kdg.sa.restaurantservice.application.command.CheckOutResponseCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateDishCommand;
 import be.kdg.sa.restaurantservice.application.command.CreateRestaurantCommand;
 import be.kdg.sa.restaurantservice.domain.order.Order;
@@ -73,8 +72,8 @@ public class RestaurantController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<GetAllRestaurantDto>> getRestaurants() {
-        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+    public ResponseEntity<List<GetAllRestaurantDto>> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantService.findAll();
         return ResponseEntity.ok(restaurants.stream().map(GetAllRestaurantDto::from).toList());
     }
 
