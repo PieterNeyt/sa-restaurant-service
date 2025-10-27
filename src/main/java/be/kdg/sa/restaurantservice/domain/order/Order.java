@@ -56,8 +56,8 @@ public class Order {
     public void deny(String message, UUID restaurantId) {
         checkRestaurant(restaurantId);
 
-        if(status == OrderStatus.ACCEPTED || status == OrderStatus.READY_FOR_PICKUP)
-            throw new IllegalStateException("Order has already been accepted or is already ready for pick up");
+        if( status == OrderStatus.READY_FOR_PICKUP)
+            throw new IllegalStateException("Order is already ready for pick up");
 
         setMessage(message);
         this.status = OrderStatus.DENIED;

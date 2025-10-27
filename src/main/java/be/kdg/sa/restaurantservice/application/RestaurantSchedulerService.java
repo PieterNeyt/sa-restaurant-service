@@ -47,7 +47,7 @@ public class RestaurantSchedulerService {
                     change.getPreparationTime());
 
             restRepo.save(restaurant);
-            scheduledRepo.delete(change);
+
         }
     }
 

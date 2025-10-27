@@ -34,7 +34,12 @@ Authorization: Bearer {{access_token}}
 %}
 
 ### Order accept
-PUT http://localhost:8080/api/restaurant/{{restaurantId}}/order/{{orderId}}/accept
+PUT http://localhost:8080/api/restaurant/restaurant/{{restaurantId}}/order/{{orderId}}/accept
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+### Order Ready for pickup
+PUT http://localhost:8080/api/restaurant/restaurant/{{restaurantId}}/order/{{orderId}}/ready
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
@@ -43,9 +48,8 @@ PUT http://localhost:8080/api/restaurant/{{restaurantId}}/order/{{orderId}}/deny
 Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
-{
-    "message": "sorry we kunnen op dit moment geen grote bestellingen aannemen"
-}
+"message: sorry we kunnen op dit moment geen grote bestellingen aannemen"
+
 
 ### Order ready
 PUT http://localhost:8080/api/restaurant/{{restaurantId}}/order/{{orderId}}/ready
