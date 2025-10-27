@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,22 +22,25 @@ public class Order {
     private final Date startDate;
     private String message;
     private OrderStatus status;
+    private final List<OrderDish> dishes;
 
-    public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price) {
+    public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price,List<OrderDish> dishes) {
         this.orderId = orderId;
         this.restaurantId = restaurantId;
         this.price = price;
+        this.dishes = dishes;
         this.status = OrderStatus.PENDING;
         this.startDate = Date.from(Instant.now());
     }
 
-    public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price, Date setDate, String message, OrderStatus status) {
+    public Order(OrderId orderId, RestaurantId restaurantId, BigDecimal price, Date setDate, String message, OrderStatus status,List<OrderDish> dishes) {
         this.orderId = orderId;
         this.restaurantId = restaurantId;
         this.price = price;
         this.startDate = setDate;
         this.message = message;
         this.status = status;
+        this.dishes = dishes;
     }
 
     public void setMessage(String message) {

@@ -2,8 +2,8 @@ package be.kdg.sa.restaurantservice.infrastructure;
 
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChange;
 import be.kdg.sa.restaurantservice.domain.schedulechange.ScheduledDishChangeRepository;
-import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaScheduledDishChangeEntity;
-import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaScheduledDishChangeRepository;
+import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaScheduledDishChangeEntity;
+import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaScheduledDishChangeRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

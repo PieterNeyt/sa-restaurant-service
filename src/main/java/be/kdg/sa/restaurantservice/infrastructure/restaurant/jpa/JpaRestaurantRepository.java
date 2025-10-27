@@ -1,4 +1,4 @@
-package be.kdg.sa.restaurantservice.infrastructure.jpa;
+package be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

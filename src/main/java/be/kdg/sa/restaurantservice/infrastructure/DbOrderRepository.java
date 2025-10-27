@@ -2,8 +2,8 @@ package be.kdg.sa.restaurantservice.infrastructure;
 
 import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderRepository;
-import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaOrderEntity;
-import be.kdg.sa.restaurantservice.infrastructure.jpa.JpaOrderRepository;
+import be.kdg.sa.restaurantservice.infrastructure.order.jpa.JpaOrderEntity;
+import be.kdg.sa.restaurantservice.infrastructure.order.jpa.JpaOrderRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
