@@ -9,7 +9,6 @@ import be.kdg.sa.restaurantservice.domain.order.OrderRepository;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantId;
 import be.kdg.sa.restaurantservice.infrastructure.handler.OrderMessage;
 import jakarta.transaction.Transactional;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final IOrderMessagePublisher orderMessageService;
-    public OrderService(OrderRepository orderRepository, RabbitTemplate rabbitTemplate, IOrderMessagePublisher orderMessageService) {
+    public OrderService(OrderRepository orderRepository, IOrderMessagePublisher orderMessageService) {
         this.orderRepository = orderRepository;
         this.orderMessageService = orderMessageService;
     }
@@ -29,7 +28,8 @@ public class OrderService {
         Order order = new Order(
                 new OrderId(msg.id()),
                 new RestaurantId(msg.restaurantId()),
-                msg.totalPrice()
+                msg.totalPrice(),
+                OrderMessage.DishMessage.toDomain(msg.dishes())
         );
         orderRepository.save(order);
     }
