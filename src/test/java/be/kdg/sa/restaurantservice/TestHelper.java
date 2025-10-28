@@ -2,6 +2,7 @@ package be.kdg.sa.restaurantservice;
 
 import be.kdg.sa.restaurantservice.domain.restaurant.PriceCategory;
 import be.kdg.sa.restaurantservice.domain.restaurant.Restaurant;
+import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantFactory;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantType;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaAddressEmbeddable;
 import be.kdg.sa.restaurantservice.infrastructure.restaurant.jpa.JpaRestaurantEntity;
@@ -16,7 +17,8 @@ import java.util.UUID;
 public class TestHelper {
     @Autowired
     private JpaRestaurantRepository jpaRestaurantRepository;
-
+    @Autowired
+    private RestaurantFactory restaurantFactory;
     public Restaurant saveRestaurent() {
         JpaAddressEmbeddable address = new JpaAddressEmbeddable(
                 "Groenplaats",
@@ -39,7 +41,7 @@ public class TestHelper {
         );
 
         jpaRestaurantRepository.save(restaurantEntity);
-        return restaurantEntity.toDomain();
+        return restaurantEntity.toDomain(restaurantFactory);
     }
 
     public void cleanUp() {

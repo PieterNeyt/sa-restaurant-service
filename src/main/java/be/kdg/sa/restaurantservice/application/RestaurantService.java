@@ -23,10 +23,13 @@ import java.util.UUID;
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final ScheduledDishChangeRepository scheduledRepo;
+    private final RestaurantFactory restaurantFactory;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, ScheduledDishChangeRepository scheduledRepo) {
+
+    public RestaurantService(RestaurantRepository restaurantRepository, ScheduledDishChangeRepository scheduledRepo, RestaurantFactory restaurantFactory) {
         this.restaurantRepository = restaurantRepository;
         this.scheduledRepo = scheduledRepo;
+        this.restaurantFactory = restaurantFactory;
     }
 
     public Restaurant createRestaurant(CreateRestaurantCommand restaurantCommand) {
@@ -41,7 +44,7 @@ public class RestaurantService {
                 restaurantCommand.country()
         );
 
-        Restaurant restaurant = new Restaurant(
+        Restaurant restaurant = restaurantFactory.create(
                 new OwnerId(restaurantCommand.ownerId()),
                 address,
                 restaurantCommand.restaurantType(),
@@ -71,18 +74,40 @@ public class RestaurantService {
         return dish;
     }
 
-    public void updateStateDish(UUID dishId, DishState state) {
+    public void publishDish(UUID dishId) {
         Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId)
                 .orElseThrow(() -> new NotFoundException("Restaurant not found"));
 
-        restaurant.updateDishState(dishId,state);
+        restaurant.publishDish(dishId);
         restaurantRepository.save(restaurant);
     }
-    public void updateOpenState(UUID restaurantId, UUID requesterId ) {
+    public void hideDish(UUID dishId) {
+        Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
+        restaurant.hideDish(dishId);
+        restaurantRepository.save(restaurant);
+    }
+    public void markDishUnavailable(UUID dishId) {
+        Restaurant restaurant = restaurantRepository.findRestaurantFromDishId(dishId)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
+        restaurant.markDishAsUnavailable(dishId);
+        restaurantRepository.save(restaurant);
+    }
+
+    public void open(UUID restaurantId, UUID requesterId ) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new NotFoundException("Restaurant not found"));
 
-        restaurant.changeOpenState(requesterId);
+        restaurant.open(requesterId);
+        restaurantRepository.save(restaurant);
+    }
+    public void close(UUID restaurantId, UUID requesterId ) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new NotFoundException("Restaurant not found"));
+
+        restaurant.close(requesterId);
         restaurantRepository.save(restaurant);
     }
 
@@ -106,7 +131,7 @@ public class RestaurantService {
         return openingHour;
     }
 
-    public List<Restaurant> getAllRestaurants() {
+    public List<Restaurant> findAll() {
         return restaurantRepository.findAll();
     }
 

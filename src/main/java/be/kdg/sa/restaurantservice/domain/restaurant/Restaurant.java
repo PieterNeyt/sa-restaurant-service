@@ -1,8 +1,10 @@
 package be.kdg.sa.restaurantservice.domain.restaurant;
 
+import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
 import be.kdg.sa.restaurantservice.domain.ActionNotPossibleException;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.address.Address;
+import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderLine;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
@@ -12,11 +14,10 @@ import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Identity;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.*;
 
 @AggregateRoot
@@ -39,17 +40,14 @@ public class Restaurant {
     private boolean isOpen;
     private PriceCategory priceCategory;
 
-    @Value("${restaurant.max.published_dishes}")
-    private int MAX_PUBLISHED_DISHES;
-    @Value("${restaurant.cheap.category}")
-    private int MAX_AVG_PRICE_CHEAP_CATEGORY;
-    @Value("${restaurant.normal.category}")
-    private int MAX_AVG_PRICE_NORMAL_CATEGORY;
-    @Value("${restaurant.expensive.category}")
-    private int MAX_AVG_PRICE_EXPENSIVE_CATEGORY;
+    private final int MAX_PUBLISHED_DISHES;
+    private final int MAX_AVG_PRICE_CHEAP_CATEGORY;
+    private final int MAX_AVG_PRICE_NORMAL_CATEGORY;
+    private final int MAX_AVG_PRICE_EXPENSIVE_CATEGORY;
 
 
-    public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo) {
+    public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo int maxPublishedDishes, int maxAvgPriceCheapCategory,
+                      int maxAvgPriceNormalCategory, int maxAvgPriceExpensiveCategory) {
         this.name = name;
         this.id = RestaurantId.create();
         this.ownerId = ownerId;
@@ -59,13 +57,19 @@ public class Restaurant {
         this.logo = logo;
         this.isOpen = false;
         this.priceCategory = PriceCategory.CHEAP;
+
+        this.MAX_PUBLISHED_DISHES = maxPublishedDishes;
+        this.MAX_AVG_PRICE_CHEAP_CATEGORY = maxAvgPriceCheapCategory;
+        this.MAX_AVG_PRICE_NORMAL_CATEGORY = maxAvgPriceNormalCategory;
+        this.MAX_AVG_PRICE_EXPENSIVE_CATEGORY = maxAvgPriceExpensiveCategory;
     }
 
     public Restaurant(RestaurantId id, OwnerId ownerId, Address address,
-                      RestaurantType type,
-                      String name, String email, String logo,
-                      boolean isOpen,
-                      PriceCategory priceCategory) {
+                      RestaurantType type, String name, String email, String logo,
+                      boolean isOpen, PriceCategory priceCategory,
+                      int maxPublishedDishes, int maxAvgPriceCheapCategory,
+                      int maxAvgPriceNormalCategory, int maxAvgPriceExpensiveCategory) {
+
         this.id = id;
         this.ownerId = ownerId;
         this.address = address;
@@ -75,6 +79,11 @@ public class Restaurant {
         this.type = type;
         this.priceCategory = priceCategory;
         this.isOpen = isOpen;
+
+        this.MAX_PUBLISHED_DISHES = maxPublishedDishes;
+        this.MAX_AVG_PRICE_CHEAP_CATEGORY = maxAvgPriceCheapCategory;
+        this.MAX_AVG_PRICE_NORMAL_CATEGORY = maxAvgPriceNormalCategory;
+        this.MAX_AVG_PRICE_EXPENSIVE_CATEGORY = maxAvgPriceExpensiveCategory;
     }
 
     public List<Dish> getDishes() {
@@ -87,16 +96,30 @@ public class Restaurant {
         updatePriceCategory();
     }
 
-    public void updateDishState(UUID dishId, DishState state) {
-        //get Dish
+    public void publishDish(UUID dishId) {
+
         Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst()
                 .orElseThrow(() -> new NotFoundException("dish not found"));
 
-        if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
+        if (hasMaximumPublishedDishes())
             throw new ActionNotPossibleException("Maximum amount of dishes achieved (10)");
 
-        dish.changeStateTo(state);
+        dish.publish();
         updatePriceCategory();
+    }
+    public void markDishAsUnavailable(UUID dishId) {
+
+        Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst()
+                .orElseThrow(() -> new NotFoundException("dish not found"));
+
+        dish.markTempNotAvailable();
+    }
+    public void hideDish(UUID dishId) {
+
+        Dish dish = dishes.stream().filter(d -> d.getId().id().equals(dishId)).findFirst()
+                .orElseThrow(() -> new NotFoundException("dish not found"));
+
+        dish.hide();
     }
 
     private boolean hasMaximumPublishedDishes() {
@@ -105,12 +128,20 @@ public class Restaurant {
                 .count() >= MAX_PUBLISHED_DISHES;
     }
 
-    public void changeOpenState(UUID requesterId) {
+
+    public void open(UUID requesterId) {
         if (!ownerId.id().equals(requesterId)) {
             throw new ActionNotPossibleException("Only the restaurant owner can change the open state");
         }
-        this.isOpen = !isOpen;
+        this.isOpen = true;
     }
+    public void close(UUID requesterId) {
+        if (!ownerId.id().equals(requesterId)) {
+            throw new ActionNotPossibleException("Only the restaurant owner can change the open state");
+        }
+        this.isOpen = false;
+    }
+
     public void updatePriceCategory() {
 
         if (dishes.isEmpty()) {
@@ -136,16 +167,28 @@ public class Restaurant {
     }
 
     public void changeDish(DishId dishId, DishState targetState, String targetName, BigDecimal targetPrice, String targetDescription, int targetPreparationTime) {
-        dishes.stream()
+        Dish dish = dishes.stream()
                 .filter(d -> d.getId().id().equals(dishId.id()))
-                .findFirst().ifPresent(dish -> {
-                    updateDishState(dishId.id(),targetState);
-                    dish.changePriceTo(targetPrice);
-                    dish.changeDescriptionTo(targetDescription);
-                    dish.changeNameTo(targetName);
-                    dish.changePreparationTime(targetPreparationTime);
-                });
-        updatePriceCategory();
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("dish not found"));
+
+        dish.changeNameTo(targetName);
+        dish.changePriceTo(targetPrice);
+        dish.changeDescriptionTo(targetDescription);
+        dish.changePreparationTime(targetPreparationTime);
+
+        // Update state via je nieuwe methods
+        switch (targetState) {
+            case PUBLISHED:
+                publishDish(dishId.id());
+                break;
+            case TEMP_NOT_AVAILABLE:
+                markDishAsUnavailable(dishId.id());
+                break;
+            case NOT_PUBLISHED:
+                hideDish(dishId.id());
+                break;
+        }
     }
     public OpeningHour addOpeningHour(DayOfWeek dayOfWeek, LocalTime openingTime, LocalTime closingTime) {
         OpeningHour openingHour = new OpeningHour(dayOfWeek, openingTime, closingTime);

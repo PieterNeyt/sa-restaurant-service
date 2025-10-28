@@ -79,18 +79,28 @@ Authorization: Bearer {{access_token}}
 > {% client.global.set("dishId2", response.body.id); %}
 
 
-### 3. Dish status veranderen (dishId automatisch gebruikt)
-PUT http://localhost:8080/api/restaurant/changeStateDish/{{dishId}}
+### 3.1 Dish status veranderen naar not published
+PUT http://localhost:8080/api/restaurant/{{dishId}}/hideDish
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
-"PUBLISHED"
-
-
-### 4. Restaurant openen of sluiten
-PUT http://localhost:8080/api/restaurant/{{restaurantId}}/changeOpenState
+### 3.2 Dish status veranderen naar published
+PUT http://localhost:8080/api/restaurant/{{dishId}}/publishDish
+Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
+### 3.3 Dish status veranderen naar temp not available
+PUT http://localhost:8080/api/restaurant/{{dishId}}/markDishUnavailable
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 4. Restaurantsluiten
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/close
+Authorization: Bearer {{access_token}}
+
+### 4.1 Restaurant openen
+PUT http://localhost:8080/api/restaurant/{{restaurantId}}/open
+Authorization: Bearer {{access_token}}
 
 ### 5. Schedule een dish change (bv. naar NOT_PUBLISHED over 2 minuten)
 POST http://localhost:8080/api/restaurant/scheduleDishChange
