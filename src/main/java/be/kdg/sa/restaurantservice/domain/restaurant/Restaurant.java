@@ -1,9 +1,8 @@
 package be.kdg.sa.restaurantservice.domain.restaurant;
 
-import be.kdg.sa.restaurantservice.application.command.CheckOutRequestCommand;
+import be.kdg.sa.restaurantservice.domain.ActionNotPossibleException;
 import be.kdg.sa.restaurantservice.domain.NotFoundException;
 import be.kdg.sa.restaurantservice.domain.address.Address;
-import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderLine;
 import be.kdg.sa.restaurantservice.domain.owner.OwnerId;
 import be.kdg.sa.restaurantservice.domain.restaurant.dish.Dish;
@@ -13,10 +12,11 @@ import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Identity;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 @AggregateRoot
@@ -25,7 +25,7 @@ public class Restaurant {
     @Identity
     private final RestaurantId id;
     private final OwnerId ownerId;
-    private Address address;
+    private final Address address;
 
     private final RestaurantType type;
 
@@ -50,15 +50,6 @@ public class Restaurant {
 
 
     public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo) {
-        Assert.notNull(ownerId, "owner id must not be null");
-        Assert.notNull(address, "address must not be null");
-
-        Assert.hasText(name, "name must not be blank");
-        Assert.hasText(email, "email must not be blank");
-        Assert.hasText(logo, "logo must not be blank");
-
-        Assert.notNull(type, "restaurant type must not be null");
-
         this.name = name;
         this.id = RestaurantId.create();
         this.ownerId = ownerId;
@@ -75,17 +66,6 @@ public class Restaurant {
                       String name, String email, String logo,
                       boolean isOpen,
                       PriceCategory priceCategory) {
-        Assert.notNull(id, "id must not be null");
-        Assert.notNull(ownerId, "owner id must not be null");
-        Assert.notNull(address, "address id must not be null");
-
-        Assert.hasText(name, "name must not be blank");
-        Assert.hasText(email, "email must not be blank");
-        Assert.hasText(logo, "logo must not be blank");
-
-        Assert.notNull(type, "restaurant type must not be null");
-        Assert.notNull(priceCategory, "priceCategory must not be null");
-
         this.id = id;
         this.ownerId = ownerId;
         this.address = address;
@@ -113,7 +93,7 @@ public class Restaurant {
                 .orElseThrow(() -> new NotFoundException("dish not found"));
 
         if (state == DishState.PUBLISHED && hasMaximumPublishedDishes())
-            throw new RuntimeException("Maximum amount of dishes achieved (10)");
+            throw new ActionNotPossibleException("Maximum amount of dishes achieved (10)");
 
         dish.changeStateTo(state);
         updatePriceCategory();
@@ -127,7 +107,7 @@ public class Restaurant {
 
     public void changeOpenState(UUID requesterId) {
         if (!ownerId.id().equals(requesterId)) {
-            throw new IllegalStateException("Only the restaurant owner can change the open state");
+            throw new ActionNotPossibleException("Only the restaurant owner can change the open state");
         }
         this.isOpen = !isOpen;
     }
@@ -174,7 +154,7 @@ public class Restaurant {
                 .filter(o -> o.getDayOfWeek() == openingHour.getDayOfWeek())
                 .findFirst();
 
-        if (existing.isPresent()) throw new IllegalArgumentException("Opening hours for this day already exist");
+        if (existing.isPresent()) throw new ActionNotPossibleException("Opening hours for this day already exist");
 
         openingHours.add(openingHour);
         return openingHour;
@@ -207,7 +187,7 @@ public class Restaurant {
         var expectedFinishTime = now.plusMinutes(maxPreparationMinutes);
 
         if (!openingHoursToday.isOpenAt(now) || expectedFinishTime.isAfter(openingHoursToday.getClosingTime())) {
-         //   throw new NotFoundException("Restaurant is closed or order cannot be fullfiled ontime");
+          throw new NotFoundException("Restaurant is closed or order cannot be fulfilled onetime");
         }
     }
 
@@ -222,11 +202,11 @@ public class Restaurant {
                 !dish.getName().equals(item.name()) ||
                 dish.getPreparationTime() != item.preparationTime()) {
 
-            throw new IllegalStateException("The attributes of one or more dishes has changed ");
+            throw new ActionNotPossibleException("The attributes of one or more dishes has changed ");
         }
 
         if (dish.getState() != DishState.PUBLISHED) {
-            throw new IllegalStateException("Dish " + dish.getName() + " is not available right now.");
+            throw new ActionNotPossibleException("Dish " + dish.getName() + " is not available right now.");
         }
     }
 }

@@ -20,25 +20,25 @@ public class CheckoutService {
     }
 
     public void prepareCheckout(CheckOutRequestCommand checkoutRequest) {
-        Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
+       /* Restaurant restaurant = restaurantService.getRestaurantById(checkoutRequest.restaurantId());
         List<OrderLine> items = checkoutRequest.items()
                 .stream()
                 .map(OrderLine::from)
                 .toList();
 
-        restaurant.prepareCheckout(items);
+        restaurant.prepareCheckout(items);*/
         new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout prepared");
     }
 
 
     public CheckOutResponseCommand checkout(CheckOutRequestCommand checkoutRequest) {
-        prepareCheckout(checkoutRequest);
+        /*prepareCheckout(checkoutRequest);
 
         checkoutRequest.items()
                 .forEach(item -> {
             var restaurant = restaurantService.GetRestaurantWithDishFromDish(item.dishId());
             restaurant.checkDish(OrderLine.from(item));
-        });
+        });*/
 
         return new CheckOutResponseCommand(checkoutRequest.orderId(), true, "Checkout succesvol");
     }

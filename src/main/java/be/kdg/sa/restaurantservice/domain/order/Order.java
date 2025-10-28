@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.domain.order;
 
+import be.kdg.sa.restaurantservice.domain.ActionNotPossibleException;
 import be.kdg.sa.restaurantservice.domain.restaurant.RestaurantId;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
@@ -44,7 +45,9 @@ public class Order {
     }
 
     public void setMessage(String message) {
-        Assert.hasText(message, "message must not be empty");
+        if(message.isBlank())
+            throw new ActionNotPossibleException("message must not be empty");
+
         this.message = message;
     }
 
@@ -52,7 +55,7 @@ public class Order {
         checkRestaurant(restaurantId);
 
         if(status == OrderStatus.ACCEPTED || status == OrderStatus.READY_FOR_PICKUP)
-            throw new IllegalStateException("Order has already been accepted or is altready ready for pick up");
+            throw new ActionNotPossibleException("Order has already been accepted or is altready ready for pick up");
 
         this.status = OrderStatus.ACCEPTED;
     }
@@ -61,7 +64,7 @@ public class Order {
         checkRestaurant(restaurantId);
 
         if( status == OrderStatus.READY_FOR_PICKUP)
-            throw new IllegalStateException("Order is already ready for pick up");
+            throw new ActionNotPossibleException("Order is already ready for pick up");
 
         setMessage(message);
         this.status = OrderStatus.DENIED;
@@ -71,14 +74,14 @@ public class Order {
         checkRestaurant(restaurantId);
 
         if(status != OrderStatus.ACCEPTED)
-            throw new IllegalStateException("Order is not yet accepted");
+            throw new ActionNotPossibleException("Order is not yet accepted");
 
         this.status = OrderStatus.READY_FOR_PICKUP;
     }
 
     public void checkRestaurant(UUID restaurantId) {
         if(!restaurantId.equals(this.restaurantId.id())) {
-            throw new RuntimeException("this order does not belong to restaurant");
+            throw new ActionNotPossibleException("this order does not belong to restaurant");
         }
     }
 

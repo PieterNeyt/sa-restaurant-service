@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.domain.restaurant;
 
+import be.kdg.sa.restaurantservice.domain.ActionNotPossibleException;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.ValueObject;
 import org.springframework.util.Assert;
@@ -27,11 +28,14 @@ public class OpeningHour {
     }
 
     public void changeOpeningTime(LocalTime time) {
-        Assert.isTrue(time.isBefore(closingTime), "Start time should be before end time");
+        if(time.isAfter(closingTime))
+            throw new ActionNotPossibleException("Opening time should be after closing time");
+
         this.openingTime = time;
     }
     public void changeClosingTIme(LocalTime time) {
-        Assert.isTrue(time.isAfter(openingTime), "Start time should be before end time");
+        if(time.isBefore(closingTime))
+            throw new ActionNotPossibleException("Start time should be before end time");
         this.closingTime = time;
     }
 }
