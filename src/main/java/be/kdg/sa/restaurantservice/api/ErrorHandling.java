@@ -20,7 +20,7 @@ public class ErrorHandling {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
     @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<ErrorResponse> SecurityException(final ActionNotPossibleException ex) {
+    public ResponseEntity<ErrorResponse> SecurityException(final SecurityException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }

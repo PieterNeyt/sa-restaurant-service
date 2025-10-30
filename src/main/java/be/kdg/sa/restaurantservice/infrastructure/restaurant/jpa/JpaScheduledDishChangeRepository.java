@@ -13,9 +13,6 @@ import java.util.UUID;
 public interface JpaScheduledDishChangeRepository extends JpaRepository<JpaScheduledDishChangeEntity, UUID> {
     List<JpaScheduledDishChangeEntity> findByScheduledTimeBefore(LocalDateTime now);
 
-    List<JpaScheduledDishChangeEntity> findByScheduledTimeAfter(LocalDateTime now);
-
-
     @Query("SELECT sdc FROM JpaScheduledDishChangeEntity sdc " +
             "JOIN JpaDishEntity d ON sdc.dishId = d.id " +
             "WHERE d.restaurant.id = :restaurantId " +

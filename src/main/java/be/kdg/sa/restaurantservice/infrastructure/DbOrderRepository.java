@@ -2,6 +2,7 @@ package be.kdg.sa.restaurantservice.infrastructure;
 
 import be.kdg.sa.restaurantservice.domain.order.Order;
 import be.kdg.sa.restaurantservice.domain.order.OrderRepository;
+import be.kdg.sa.restaurantservice.domain.order.OrderStatus;
 import be.kdg.sa.restaurantservice.infrastructure.order.jpa.JpaOrderEntity;
 import be.kdg.sa.restaurantservice.infrastructure.order.jpa.JpaOrderRepository;
 import org.springframework.stereotype.Repository;
@@ -42,7 +43,7 @@ public class DbOrderRepository implements OrderRepository {
 
     @Override
     public List<Order> findAllPendingOrders() {
-        return this.jpaOrderRepository.findAllPendingOrders().stream()
+        return this.jpaOrderRepository.findByStatus(OrderStatus.PENDING).stream()
                 .map(JpaOrderEntity::toDomain)
                 .toList();
     }
