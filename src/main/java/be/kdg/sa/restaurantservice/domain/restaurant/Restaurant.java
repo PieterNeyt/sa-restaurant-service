@@ -46,7 +46,7 @@ public class Restaurant {
     private final int MAX_AVG_PRICE_EXPENSIVE_CATEGORY;
 
 
-    public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo int maxPublishedDishes, int maxAvgPriceCheapCategory,
+    public Restaurant(OwnerId ownerId, Address address, RestaurantType type, String name, String email, String logo, int maxPublishedDishes, int maxAvgPriceCheapCategory,
                       int maxAvgPriceNormalCategory, int maxAvgPriceExpensiveCategory) {
         this.name = name;
         this.id = RestaurantId.create();
