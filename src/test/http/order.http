@@ -5,8 +5,11 @@
 #client_id=backend-client&client_secret=NHhC580gogEpJ5K9fqsiyLiqF4VpqTKE&username=owner&password=owner&grant_type=password&scope=openid
 
 ### Eerst token ophalen
-GET localhost:8080/api/security/JwtToken
+GET http://localhost:8080/api/security/JwtToken
 
+> {%
+    client.global.set("access_token", response.body);
+%}
 ### Eerst token ophalen
 #POST http://localhost:8180/realms/keepdishesgoing/protocol/openid-connect/token
 #Content-Type: application/x-www-form-urlencoded
@@ -21,10 +24,12 @@ GET http://localhost:8080/api/restaurant/a1b2c3d4-e5f6-4a7b-8c9d-000000000002/or
 Authorization: Bearer {{access_token}}
 
 > {%
-    let orders = JSON.parse(response.body);
-    if (orders.length > 0) {
+    let orders = response.body;
+    if (orders && orders.length > 0) {
         client.global.set("orderId", orders[0].orderId);
         client.global.set("restaurantId", orders[0].restaurantId);
+    } else {
+        console.log("No orders found in response");
     }
 %}
 

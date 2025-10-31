@@ -1,5 +1,6 @@
 package be.kdg.sa.restaurantservice.domain.restaurant.dish;
 
+import be.kdg.sa.restaurantservice.domain.ActionNotPossibleException;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
 import org.jmolecules.ddd.annotation.Identity;
